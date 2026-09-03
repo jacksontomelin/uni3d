@@ -1,4 +1,4 @@
-# Build do frontend + nginx servindo tudo (app estático + landing + proxy).
+# Build do frontend + nginx servindo tudo. Contexto = raiz do projeto.
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
 COPY frontend/package.json ./
@@ -7,6 +7,6 @@ COPY frontend/ ./
 RUN npm run build
 
 FROM nginx:alpine
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY landing/ /usr/share/nginx/landing/
 COPY --from=build /app/dist /usr/share/nginx/app/
