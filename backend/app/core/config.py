@@ -19,4 +19,14 @@ class Settings(BaseSettings):
     model_config = {"env_file": ".env"}
 
 
+def _normalize_db_url(url: str) -> str:
+    # Coolify/Heroku entregam postgres:// ou postgresql:// — o driver async exige +asyncpg
+    if url.startswith("postgres://"):
+        url = "postgresql+asyncpg://" + url[len("postgres://"):]
+    elif url.startswith("postgresql://"):
+        url = "postgresql+asyncpg://" + url[len("postgresql://"):]
+    return url
+
+
 settings = Settings()
+settings.DATABASE_URL = _normalize_db_url(settings.DATABASE_URL)
