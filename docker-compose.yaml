@@ -48,6 +48,8 @@ services:
       context: .
       dockerfile: nginx/Dockerfile
     restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_NGINX_80=/
     expose:
       - "80"
     depends_on:
