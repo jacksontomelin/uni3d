@@ -1,6 +1,23 @@
 version: "3.9"
 
 services:
+  # ── PostgreSQL (interno, mesma rede) ───────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: uni3d
+      POSTGRES_USER: uni3d
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-uni3d_secure_2026}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uni3d"]
+      interval: 5s
+      retries: 10
+
   # ── MinIO (S3-compatible file storage) ──────────────────────
   minio:
     image: minio/minio:latest
@@ -31,10 +48,12 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
+      postgres:
+        condition: service_healthy
       minio:
         condition: service_started
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql+asyncpg://uni3d:${DB_PASSWORD:-uni3d_secure_2026}@postgres:5432/uni3d
       MINIO_ENDPOINT: minio:9000
       MINIO_USER: ${MINIO_USER:-uni3d}
       MINIO_PASSWORD: ${MINIO_PASSWORD:-change_me_in_production}
@@ -60,4 +79,5 @@ services:
       - kirimoto
 
 volumes:
+  pgdata:
   miniodata:
