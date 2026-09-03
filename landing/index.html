@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Uni3D · Do arquivo 3D ao G-code, sem sair do navegador</title>
+<meta name="description" content="Uni3D: plataforma da UniController pra visualizar, conferir e fatiar modelos STL, OBJ e 3MF direto no navegador. Self-hosted, no seu servidor.">
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<style>
+:root{--navy:#0f2d4a;--navy2:#163d63;--az:#0284c7;--azd:#0369a1;--azl:#38bdf8;--azs:#e0f2fe;--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--white);font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+svg{display:block}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:rgba(15,45,74,.96);backdrop-filter:blur(8px);color:#fff}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;position:relative}
+.brand-mark .star{position:absolute;top:-5px;right:-5px}
+.brand b{font-size:17px;letter-spacing:-.2px;display:block;line-height:1.1}
+.brand small{color:var(--azl);font-size:11px}
+.nav-links{display:flex;gap:26px;font-size:14px;color:#cbd5e1}
+.nav-links a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:9px;font-weight:600;font-size:14.5px;border:1px solid transparent;cursor:pointer;transition:.15s}
+.btn-primary{background:var(--az);color:#fff}.btn-primary:hover{background:var(--azd)}
+.btn-white{background:#fff;color:var(--navy)}.btn-white:hover{background:#e8f0f8}
+.btn-ghost{border-color:rgba(255,255,255,.35);color:#fff}.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-line{border-color:var(--line);color:var(--navy);background:#fff}.btn-line:hover{background:var(--bg)}
+
+/* hero */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 55%,var(--azd) 100%);color:#fff;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding-top:80px;padding-bottom:80px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.3);color:#bae6fd;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;margin-bottom:20px}
+.hero h1{font-size:46px;line-height:1.12;letter-spacing:-.6px;font-weight:800;margin-bottom:18px}
+.hero p{color:#dbe5ef;font-size:17.5px;max-width:520px;margin-bottom:28px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:30px}
+.hero-meta{display:flex;gap:24px;flex-wrap:wrap;color:#cbd5e1;font-size:13.5px}
+.hero-meta span{display:flex;align-items:center;gap:7px}
+.shot{border-radius:14px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.12);transform:rotate(-1.2deg)}
+.shot img{width:100%;display:block}
+
+/* logos strip */
+.strip{background:var(--bg);border-bottom:1px solid var(--line);padding:22px 0}
+.strip .wrap{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;color:var(--muted);font-size:13.5px;font-weight:600}
+.strip span{display:flex;align-items:center;gap:8px}
+
+/* sections */
+section{padding:84px 0}
+.sec-head{max-width:640px;margin-bottom:44px}
+.kicker{display:inline-flex;align-items:center;gap:8px;color:var(--az);font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
+.kicker i{width:26px;height:26px;border-radius:7px;background:var(--azs);display:flex;align-items:center;justify-content:center}
+h2{font-size:34px;line-height:1.2;letter-spacing:-.4px;color:var(--navy);font-weight:800;margin-bottom:12px}
+.sec-head p{color:var(--muted);font-size:17px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;box-shadow:0 1px 3px rgba(15,45,74,.08),0 1px 2px rgba(15,45,74,.06);transition:.2s}
+.card:hover{box-shadow:0 10px 26px rgba(15,45,74,.12);transform:translateY(-2px)}
+.ic{width:44px;height:44px;border-radius:11px;background:var(--azs);color:var(--az);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.card h3{color:var(--navy);font-size:18px;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14.5px}
+
+.alt{background:var(--bg)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;position:relative}
+.step::before{counter-increment:s;content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.step h4{color:var(--navy);font-size:16px;margin-bottom:6px}
+.step p{color:var(--muted);font-size:14px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.list{list-style:none;display:grid;gap:14px;margin-top:22px}
+.list li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px}
+.list li i{width:24px;height:24px;border-radius:50%;background:#dcfce7;color:#15803d;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ficha{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 20px 40px rgba(15,45,74,.10)}
+.ficha-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ficha-head i{width:28px;height:28px;border-radius:7px;background:var(--azs);color:var(--az);display:flex;align-items:center;justify-content:center}
+.ficha-head span{font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.4px}
+.campo{padding:9px 0;border-bottom:1px solid var(--line)}
+.campo:last-child{border:0}
+.campo small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.campo b{display:block;font-size:15px;color:var(--ink);font-weight:500;margin-top:2px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.pill-ok{background:#dcfce7;color:#15803d}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;display:flex;flex-direction:column}
+.plan.hi{border:2px solid var(--az);position:relative}
+.plan.hi::before{content:"Mais escolhido";position:absolute;top:-13px;left:24px;background:var(--az);color:#fff;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:999px}
+.plan h3{color:var(--navy);font-size:19px}
+.plan .price{font-size:38px;font-weight:800;color:var(--navy);letter-spacing:-.8px;margin:10px 0 2px}
+.plan .price small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0}
+.plan .sub{color:var(--muted);font-size:13.5px;margin-bottom:20px}
+.plan ul{list-style:none;display:grid;gap:10px;font-size:14.5px;margin-bottom:26px;flex:1}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan li i{color:var(--az);margin-top:3px}
+
+/* cta */
+.cta{background:linear-gradient(120deg,var(--navy),var(--azd));color:#fff;border-radius:18px;padding:56px;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.cta h2{color:#fff;margin-bottom:6px}
+.cta p{color:#dbe5ef;font-size:16px}
+
+footer{background:var(--navy);color:#cbd5e1;padding:44px 0 26px;font-size:14px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+footer h5{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+footer a{display:block;margin-bottom:8px}
+footer a:hover{color:#fff}
+.copy{border-top:1px solid rgba(255,255,255,.1);margin-top:34px;padding-top:20px;text-align:center;font-size:12.5px;color:#94a3b8}
+
+@media(max-width:960px){.hero .wrap{grid-template-columns:1fr;padding-top:56px;padding-bottom:56px}.hero h1{font-size:36px}.shot{transform:none}.grid3,.plans,.split{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}footer .wrap{grid-template-columns:1fr 1fr}.nav-links{display:none}h2{font-size:28px}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}.cta{padding:32px}}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap">
+  <a href="#" class="brand">
+    <div class="brand-mark">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
+      <svg class="star" width="14" height="14" viewBox="0 0 24 24"><path d="M12 2l2.6 6.5L21 9.3l-4.8 4.3L17.6 21 12 17.3 6.4 21l1.4-7.4L3 9.3l6.4-.8L12 2z" fill="#38bdf8" stroke="#0f2d4a" stroke-width="1" stroke-linejoin="round"/></svg>
+    </div>
+    <div><b>Uni3D</b><small>UniController</small></div>
+  </a>
+  <div class="nav-links"><a href="#recursos">Recursos</a><a href="#como">Como funciona</a><a href="#seguro">Self-hosted</a><a href="#planos">Planos</a></div>
+  <a href="/login" class="btn btn-primary">Entrar</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <div class="eyebrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Novo · plataforma UniController pra impressão 3D</div>
+    <h1>Do arquivo 3D ao G&#8209;code,<br>sem sair do navegador.</h1>
+    <p>Envie STL, OBJ ou 3MF, confira a malha na mesa da sua impressora, fatie com perfis prontos e baixe o G-code. Tudo rodando no seu próprio servidor.</p>
+    <div class="hero-cta"><a href="/login" class="btn btn-white">Começar agora</a><a href="#como" class="btn btn-ghost">Ver como funciona</a></div>
+    <div class="hero-meta">
+      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>STL, OBJ e 3MF</span>
+      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Fatiador no navegador</span>
+      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>100% self-hosted</span>
+    </div>
+  </div>
+  <div class="shot"><img src="img/editor.png" alt="Editor 3D do Uni3D mostrando um modelo na mesa de impressão"></div>
+</div></header>
+
+<div class="strip"><div class="wrap">
+  <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/></svg>three.js</span>
+  <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Kiri:Moto</span>
+  <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/></svg>FastAPI</span>
+  <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/></svg>PostgreSQL</span>
+  <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v10H3zM7 7v10M17 7v10"/></svg>Docker · Coolify</span>
+</div></div>
+
+<section id="recursos"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/></svg></i>Recursos</div>
+    <h2>Tudo que o lojista ou o maker precisa, num lugar só.</h2>
+    <p>Sem instalar nada. Sem mandar arquivo pra fora. Sem fila.</p>
+  </div>
+  <div class="grid3">
+    <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div><h3>Visualizador 3D com mesa real</h3><p>Gira, dá zoom, alterna wireframe e vê o modelo em pé na mesa da sua impressora, do tamanho certo.</p></div>
+    <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><h3>Fatiador integrado</h3><p>Kiri:Moto embutido: escolhe o perfil, fatia e baixa o G-code direto no navegador. Nada sai do seu servidor.</p></div>
+    <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22a10 10 0 100-20 10 10 0 000 20zm0-14v.01M12 12v5"/></svg></div><h3>Ficha técnica da malha</h3><p>Vértices, faces, dimensões em mm e se a malha está fechada. Descobre o problema antes de gastar filamento.</p></div>
+    <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 12a7.4 7.4 0 00-.1-1l2-1.5-2-3.5-2.4 1a7.4 7.4 0 00-1.7-1l-.4-2.6h-4l-.4 2.6a7.4 7.4 0 00-1.7 1l-2.4-1-2 3.5 2 1.5a7.4 7.4 0 000 2l-2 1.5 2 3.5 2.4-1a7.4 7.4 0 001.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 001.7-1l2.4 1 2-3.5-2-1.5c.1-.3.1-.7.1-1z"/></svg></div><h3>Perfis de impressão</h3><p>PLA, PETG, rápido, fino. Cadastra uma vez, usa em todo projeto. Trava por cliente no plano multi-loja.</p></div>
+    <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v7H6z"/></svg></div><h3>Várias impressoras</h3><p>Cadastra Ender, Bambu, Prusa, o que tiver. Cada uma com seu volume e seu bico, e a mesa muda junto.</p></div>
+    <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg></div><h3>Projetos e arquivos organizados</h3><p>Cada peça num projeto, com histórico de versões e o G-code guardado junto. Acha tudo depois.</p></div>
+  </div>
+</div></section>
+
+<section id="como" class="alt"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg></i>Como funciona</div>
+    <h2>Quatro passos. Nenhuma instalação.</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><h4>Envia o modelo</h4><p>Arrasta o STL, OBJ ou 3MF pro projeto. Até 200 MB por arquivo.</p></div>
+    <div class="step"><h4>Confere na mesa</h4><p>Vê a peça em pé, com as medidas reais, e checa se a malha está fechada.</p></div>
+    <div class="step"><h4>Escolhe o perfil e fatia</h4><p>PLA padrão, rápido, PETG. O fatiador roda no seu navegador em segundos.</p></div>
+    <div class="step"><h4>Baixa e imprime</h4><p>G-code pronto, com tempo estimado e gramas de filamento na ficha.</p></div>
+  </div>
+</div></section>
+
+<section id="seguro"><div class="wrap split">
+  <div>
+    <div class="kicker"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 118 0v3"/></svg></i>Self-hosted</div>
+    <h2>Seus arquivos ficam no seu servidor. Sempre.</h2>
+    <p style="color:var(--muted);font-size:16.5px">O Uni3D roda inteiro dentro da sua infraestrutura. Nenhum modelo, nenhum G-code, nenhum dado de cliente passa por serviço de terceiros.</p>
+    <ul class="list">
+      <li><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></i>Sobe com um docker-compose no seu VPS ou no Coolify</li>
+      <li><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></i>Fatiamento acontece no navegador do usuário, sem carga no servidor</li>
+      <li><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></i>Base 100% open-source: three.js, Kiri:Moto (MIT), FastAPI, PostgreSQL</li>
+      <li><i><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></i>Sem API paga, sem dependência externa, sem surpresa na fatura</li>
+    </ul>
+  </div>
+  <div class="ficha">
+    <div class="ficha-head"><i><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a10 10 0 100-20 10 10 0 000 20zm0-14v.01M12 12v5"/></svg></i><span>Ficha do modelo</span></div>
+    <div class="campo"><small>Arquivo</small><b>suporte_gopro.stl</b></div>
+    <div class="campo"><small>Dimensões (mm)</small><b>80,0 × 50,0 × 52,0</b></div>
+    <div class="campo"><small>Vértices · Faces</small><b>12.840 · 25.680</b></div>
+    <div class="campo"><small>Malha fechada</small><b><span class="pill pill-ok">Sim</span></b></div>
+    <div class="campo"><small>Perfil</small><b>PLA padrão 0.2 mm</b></div>
+    <div class="campo"><small>Tempo estimado · Filamento</small><b>1h 37min · 18,4 g</b></div>
+  </div>
+</div></section>
+
+<section id="planos" class="alt"><div class="wrap">
+  <div class="sec-head">
+    <div class="kicker"><i><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 3v18M17 7H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></i>Planos</div>
+    <h2>Simples de escolher.</h2>
+    <p>Todos os planos rodam no seu servidor. A diferença é o tamanho da operação.</p>
+  </div>
+  <div class="plans">
+    <div class="plan"><h3>Maker</h3><div class="price">R$ 0<small>/mês</small></div><div class="sub">Pra quem tem uma impressora em casa.</div>
+      <ul><li><i>✓</i>1 usuário, 1 impressora</li><li><i>✓</i>Até 20 projetos</li><li><i>✓</i>Viewer + fatiador</li><li><i>✓</i>Perfis padrão</li></ul>
+      <a href="/login" class="btn btn-line" style="justify-content:center">Começar grátis</a></div>
+    <div class="plan hi"><h3>Loja</h3><div class="price">R$ 149<small>/mês</small></div><div class="sub">Pra loja de impressão ou revenda que atende cliente.</div>
+      <ul><li><i>✓</i>Até 5 usuários, impressoras ilimitadas</li><li><i>✓</i>Projetos ilimitados</li><li><i>✓</i>Perfis por cliente</li><li><i>✓</i>Histórico e G-code guardado</li><li><i>✓</i>Suporte por WhatsApp</li></ul>
+      <a href="/login" class="btn btn-primary" style="justify-content:center">Assinar Loja</a></div>
+    <div class="plan"><h3>Rede</h3><div class="price">Sob consulta</div><div class="sub">Pra várias unidades ou marca própria.</div>
+      <ul><li><i>✓</i>Usuários e unidades ilimitados</li><li><i>✓</i>Marca própria (white-label)</li><li><i>✓</i>Instalação no seu servidor</li><li><i>✓</i>Integração com o ecossistema UniController</li></ul>
+      <a href="https://wa.me/5547999999999" class="btn btn-line" style="justify-content:center">Falar comigo</a></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="cta">
+    <div><h2>Vamos colocar sua impressora pra trabalhar.</h2><p>Sobe em minutos no seu servidor. Sem cartão, sem instalação.</p></div>
+    <a href="/login" class="btn btn-white">Criar minha conta</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>
+    <div class="brand" style="margin-bottom:12px"><div class="brand-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div><div><b style="color:#fff">Uni3D</b><small>UniController</small></div></div>
+    <p style="max-width:300px">Plataforma de impressão 3D do ecossistema UniController. Unindo tudo. Controlando tudo.</p>
+  </div>
+  <div><h5>Produto</h5><a href="#recursos">Recursos</a><a href="#como">Como funciona</a><a href="#planos">Planos</a><a href="/login">Entrar</a></div>
+  <div><h5>UniController</h5><a href="https://unicontroller.com.br">unicontroller.com.br</a><a href="https://procuracoes.com.br">UNIPROCURAÇÕES</a><a href="https://uniaocert.com.br">União CERT</a></div>
+  <div><h5>Contato</h5><a href="mailto:contato@unicontroller.com.br">contato@unicontroller.com.br</a><a href="https://instagram.com/uniaocert">@uniaocert</a><a href="#">Blumenau · Timbó, SC</a></div>
+  <div class="copy" style="grid-column:1/-1">UniController · Dev Jackson Tomelin © <span id="y"></span> Todos os direitos reservados</div>
+</div></footer>
+<script>document.getElementById("y").textContent=new Date().getFullYear()</script>
+</body>
+</html>

@@ -70,7 +70,7 @@ export default function Projects() {
                 {filtered.map((p) => (
                   <tr key={p.id} className="cursor-pointer" onClick={() => navigate(`/projeto/${p.id}`)}>
                     <td className="font-semibold text-navy">
-                      <span className="inline-flex items-center gap-2"><Icon name="cubo" size={15} className="text-azure" />{p.name}</span>
+                      <span className="inline-flex items-center gap-3"><span className="row-ic"><Icon name="cubo" size={15} /></span>{p.name}</span>
                     </td>
                     <td className="text-muted">{p.description || "Não informado"}</td>
                     <td>{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
