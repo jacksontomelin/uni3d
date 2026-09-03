@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "uni3d-files"
     MINIO_SECURE: bool = False
 
-    ALLOWED_ORIGINS: str = "http://localhost:3000"
+    ALLOWED_ORIGINS: str = "https://uni3d.unicontroller.com.br"
 
     model_config = {"env_file": ".env"}
 
