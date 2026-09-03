@@ -19,7 +19,7 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
     user = User(
         email=payload.email,
         name=payload.name,
-        hashed_password=hash_password(payload.password),
+        hashed_password=hash_password(payload.password[:72]),  # bcrypt limita 72 bytes
     )
     db.add(user)
     await db.commit()
@@ -31,7 +31,7 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
 async def login(form: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == form.username))
     user = result.scalar_one_or_none()
-    if not user or not verify_password(form.password, user.hashed_password):
+    if not user or not verify_password(form.password[:72], user.hashed_password):
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
     token = create_access_token({"sub": user.id})
     return {"access_token": token}
