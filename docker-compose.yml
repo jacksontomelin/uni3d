@@ -16,9 +16,7 @@ services:
 
   # ── Kiri:Moto (slicer engine) ──────────────────────────────
   kirimoto:
-    build:
-      context: https://github.com/GridSpace/grid-apps.git#refs/tags/latest
-      dockerfile: ./src/dock/Dockerfile
+    image: gridspace3d/kirimoto:latest
     restart: unless-stopped
     expose:
       - "8080"
