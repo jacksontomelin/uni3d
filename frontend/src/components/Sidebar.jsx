@@ -6,6 +6,7 @@ import { useAuthStore } from "../lib/store";
 const links = [
   { to: "/", label: "Painel", icon: "painel" },
   { to: "/projetos", label: "Projetos", icon: "projetos" },
+  { to: "/imagem-3d", label: "Imagem → 3D", icon: "regua" },
   { to: "/fatiador", label: "Fatiador", icon: "fatiador" },
   { to: "/impressoras", label: "Impressoras", icon: "impressora" },
   { to: "/perfis", label: "Perfis de impressão", icon: "ajustes" },

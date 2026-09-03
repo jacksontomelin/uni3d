@@ -3,7 +3,8 @@ import Sidebar from "./Sidebar";
 import Icon from "./Icon";
 import { useAuthStore } from "../lib/store";
 
-const titles = { "/": "Painel", "/projetos": "Projetos", "/fatiador": "Fatiador", "/impressoras": "Impressoras", "/perfis": "Perfis de impressão" };
+const titles = { "/": "Painel", "/projetos": "Projetos", "/imagem-3d": "Imagem para 3D",
+  "/fatiador": "Fatiador", "/impressoras": "Impressoras", "/perfis": "Perfis de impressão" };
 
 export function Footer() {
   return <div className="footer">UniController · Dev Jackson Tomelin © {new Date().getFullYear()} Todos os direitos reservados</div>;
