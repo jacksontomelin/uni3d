@@ -42,28 +42,16 @@ services:
     expose:
       - "8000"
 
-  # ── React Frontend ─────────────────────────────────────────
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - backend
-    expose:
-      - "3000"
-
   # ── Nginx reverse proxy ────────────────────────────────────
   nginx:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
     restart: unless-stopped
     expose:
       - "80"
     depends_on:
       - backend
-      - frontend
       - kirimoto
 
 volumes:
