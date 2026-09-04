@@ -29,10 +29,10 @@ function Mesh({ geometry, litofania }) {
 function Mesa({ size = 120 }) {
   return (
     <>
-      <Grid args={[size, size]} cellSize={10} cellThickness={0.6} cellColor="#cbd5e1" sectionSize={50} sectionThickness={1.1} sectionColor="#0284c7" fadeDistance={400} fadeStrength={1} />
+      <Grid args={[size, size]} cellSize={10} cellThickness={0.6} cellColor="#2a3140" sectionSize={50} sectionThickness={1.1} sectionColor="#00b37e" fadeDistance={400} fadeStrength={1} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow>
         <planeGeometry args={[size, size]} />
-        <meshStandardMaterial color="#ffffff" roughness={1} />
+        <meshStandardMaterial color="#0d1117" roughness={1} />
       </mesh>
     </>
   );
@@ -42,7 +42,7 @@ export default function GeneratedViewer({ geometry, litofania = false, empty }) 
   return (
     <div className="viewer-wrap h-full min-h-[420px]">
       <Canvas shadows camera={{ position: [90, 80, 90], fov: 40, near: 0.1, far: 3000 }} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
-        <color attach="background" args={["#ffffff"]} />
+        <color attach="background" args={["#0a0e14"]} />
         <ambientLight intensity={litofania ? 0.4 : 0.75} />
         <directionalLight position={[80, 160, 80]} intensity={1.1} castShadow shadow-mapSize={[2048, 2048]} />
         {litofania && <pointLight position={[0, -40, 0]} intensity={2.2} color="#fff8e1" />}
@@ -53,9 +53,9 @@ export default function GeneratedViewer({ geometry, litofania = false, empty }) 
       </Canvas>
       {empty && (
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="upro-ic !w-14 !h-14 mb-3"><Icon name="cubo" size={28} /></div>
-          <p className="text-navy font-semibold m-0">Envie uma imagem para gerar o modelo</p>
-          <p className="text-muted text-[13px] m-0">PNG, JPG ou WEBP · logo com fundo transparente funciona melhor</p>
+          <div className="text-mint !w-14 !h-14 mb-3"><Icon name="cubo" size={28} /></div>
+          <p className="text-ice font-semibold m-0">Envie uma imagem para gerar o modelo</p>
+          <p className="text-fog text-[13px] m-0">PNG, JPG ou WEBP · logo com fundo transparente funciona melhor</p>
         </div>
       )}
     </div>

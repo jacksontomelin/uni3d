@@ -95,13 +95,13 @@ export default function ImageTo3D() {
     <>
       {flash && <div className={`flash flash--${flash.kind}`}>{flash.msg}</div>}
 
-      <p className="text-muted m-0 mb-4 text-[13.5px]">Transforme um logotipo ou uma foto em modelo 3D pronto pra imprimir — tudo processado aqui no navegador.</p>
+      <p className="text-fog m-0 mb-4 text-[13.5px]">Transforme um logotipo ou uma foto em modelo 3D pronto pra imprimir — tudo processado aqui no navegador.</p>
 
       <div className="grid gap-5 lg:grid-cols-[340px_1fr]">
         {/* Controles */}
         <div className="space-y-5">
-          <div className="card"><div className="card__body">
-            <div className="upro-head"><div className="upro-ic"><Icon name="upload" /></div><span className="upro-tt">Imagem de origem</span></div>
+          <div className="panel"><div className="panel__body">
+            <div className="panel__title"><div className="text-mint"><Icon name="upload" /></div><span className="panel__title">Imagem de origem</span></div>
 
             <label
               className="block border-2 border-dashed border-line rounded-xl p-6 text-center cursor-pointer hover:border-azure hover:bg-azure-soft/40 transition-colors"
@@ -111,46 +111,46 @@ export default function ImageTo3D() {
               {img ? (
                 <img src={img.src} alt="Prévia" className="max-h-28 mx-auto rounded-lg" />
               ) : (
-                <div className="text-muted">
-                  <div className="upro-ic !w-12 !h-12 mx-auto mb-2"><Icon name="upload" size={22} /></div>
-                  <p className="m-0 text-[13px] font-medium text-navy">Arraste a imagem aqui</p>
+                <div className="text-fog">
+                  <div className="text-mint !w-12 !h-12 mx-auto mb-2"><Icon name="upload" size={22} /></div>
+                  <p className="m-0 text-[13px] font-medium text-ice">Arraste a imagem aqui</p>
                   <p className="m-0 text-[11.5px]">PNG, JPG ou WEBP</p>
                 </div>
               )}
               <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => loadImage(e.target.files?.[0])} />
             </label>
-            {imgName && <p className="text-[12px] text-muted mt-2 mb-0 truncate">{imgName}</p>}
+            {imgName && <p className="text-[12px] text-fog mt-2 mb-0 truncate">{imgName}</p>}
           </div></div>
 
-          <div className="card"><div className="card__body">
-            <div className="upro-head"><div className="upro-ic"><Icon name="camadas" /></div><span className="upro-tt">Modo de geração</span></div>
+          <div className="panel"><div className="panel__body">
+            <div className="panel__title"><div className="text-mint"><Icon name="camadas" /></div><span className="panel__title">Modo de geração</span></div>
             <div className="space-y-2">
               {MODOS.map((m) => (
                 <button key={m.id} onClick={() => setMode(m.id)}
                   className={`w-full flex items-start gap-3 p-3 rounded-lg border text-left transition-colors ${mode === m.id ? "border-azure bg-azure-soft" : "border-line hover:bg-slate-50"}`}>
-                  <span className={`upro-ic shrink-0 ${mode === m.id ? "" : "!bg-slate-100 !text-navy"}`}><Icon name={m.icon} /></span>
+                  <span className={`text-mint shrink-0 ${mode === m.id ? "" : "!bg-slate-100 !text-ice"}`}><Icon name={m.icon} /></span>
                   <span>
-                    <span className="block text-[13.5px] font-semibold text-navy">{m.nome}</span>
-                    <span className="block text-[12px] text-muted">{m.desc}</span>
+                    <span className="block text-[13.5px] font-semibold text-ice">{m.nome}</span>
+                    <span className="block text-[12px] text-fog">{m.desc}</span>
                   </span>
                 </button>
               ))}
             </div>
           </div></div>
 
-          <div className="card"><div className="card__body">
-            <div className="upro-head"><div className="upro-ic"><Icon name="ajustes" /></div><span className="upro-tt">Parâmetros</span></div>
+          <div className="panel"><div className="panel__body">
+            <div className="panel__title"><div className="text-mint"><Icon name="ajustes" /></div><span className="panel__title">Parâmetros</span></div>
 
-            <div className="form-row !mb-3">
-              <label>Largura: {widthMM} mm</label>
+            <div className=" !mb-3">
+              <label className="lab">Largura: {widthMM} mm</label>
               <input type="range" min="20" max="150" value={widthMM} onChange={(e) => setWidthMM(+e.target.value)} className="w-full" />
             </div>
-            <div className="form-row !mb-3">
-              <label>Base: {baseMM.toFixed(1)} mm</label>
+            <div className=" !mb-3">
+              <label className="lab">Base: {baseMM.toFixed(1)} mm</label>
               <input type="range" min="0.8" max="5" step="0.2" value={baseMM} onChange={(e) => setBaseMM(+e.target.value)} className="w-full" />
             </div>
-            <div className="form-row !mb-3">
-              <label>{litofania ? "Espessura máx." : "Altura do relevo"}: {reliefMM.toFixed(1)} mm</label>
+            <div className=" !mb-3">
+              <label className="lab">{litofania ? "Espessura máx." : "Altura do relevo"}: {reliefMM.toFixed(1)} mm</label>
               <input type="range" min="0.4" max="6" step="0.1" value={reliefMM} onChange={(e) => setReliefMM(+e.target.value)} className="w-full" />
             </div>
 
@@ -169,26 +169,26 @@ export default function ImageTo3D() {
         <div className="space-y-4">
           <div className="relative">
             <GeneratedViewer geometry={geometry} litofania={litofania} empty={!img} />
-            {busy && <div className="absolute top-3 right-3 pill pill--azul">Gerando…</div>}
+            {busy && <div className="absolute top-3 right-3 chip chip--mint">Gerando…</div>}
           </div>
 
-          <div className="card"><div className="card__body flex flex-wrap items-end gap-3">
-            <div className="form-row !mb-0 flex-1 min-w-[200px]">
-              <label>Salvar no projeto</label>
+          <div className="panel"><div className="panel__body flex flex-wrap items-end gap-3">
+            <div className=" !mb-0 flex-1 min-w-[200px]">
+              <label className="lab">Salvar no projeto</label>
               <select value={projectId} onChange={(e) => setProjectId(e.target.value)}>
                 <option value="">Selecione um projeto…</option>
                 {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
-            <button className="btn btn--ghost" onClick={salvarNoProjeto} disabled={!geometry || busy}><Icon name="arquivo" size={15} /> Salvar no projeto</button>
-            <button className="btn btn--primary" onClick={baixarSTL} disabled={!geometry}><Icon name="download" size={15} /> Baixar STL</button>
+            <button className="btn btn--line" onClick={salvarNoProjeto} disabled={!geometry || busy}><Icon name="arquivo" size={15} /> Salvar no projeto</button>
+            <button className="btn btn--go" onClick={baixarSTL} disabled={!geometry}><Icon name="download" size={15} /> Baixar STL</button>
           </div></div>
 
-          <div className="card"><div className="card__body">
-            <div className="upro-head"><div className="upro-ic"><Icon name="info" /></div><span className="upro-tt">Dicas</span></div>
-            <div className="upro-campo"><span className="upro-lb">Logo</span><span className="upro-vl text-[13px] !font-normal">Use PNG com fundo transparente e marque "Usar transparência". Modo Relevo ou Chaveiro.</span></div>
-            <div className="upro-campo"><span className="upro-lb">Foto</span><span className="upro-vl text-[13px] !font-normal">Use o modo Litofania. Imagens com bom contraste ficam melhores. Espessura máx. 3–4 mm.</span></div>
-            <div className="upro-campo"><span className="upro-lb">Impressão</span><span className="upro-vl text-[13px] !font-normal">Litofania imprime deitada, sem preenchimento e camada fina (0.1 mm). Chaveiro imprime em pé na base.</span></div>
+          <div className="panel"><div className="panel__body">
+            <div className="panel__title"><div className="text-mint"><Icon name="info" /></div><span className="panel__title">Dicas</span></div>
+            <div className="field"><span className="field__k">Logo</span><span className="field__v text-[13px] !font-normal">Use PNG com fundo transparente e marque "Usar transparência". Modo Relevo ou Chaveiro.</span></div>
+            <div className="field"><span className="field__k">Foto</span><span className="field__v text-[13px] !font-normal">Use o modo Litofania. Imagens com bom contraste ficam melhores. Espessura máx. 3–4 mm.</span></div>
+            <div className="field"><span className="field__k">Impressão</span><span className="field__v text-[13px] !font-normal">Litofania imprime deitada, sem preenchimento e camada fina (0.1 mm). Chaveiro imprime em pé na base.</span></div>
           </div></div>
         </div>
       </div>

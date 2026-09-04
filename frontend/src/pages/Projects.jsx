@@ -38,45 +38,45 @@ export default function Projects() {
   return (
     <>
       <div className="flex flex-wrap gap-3 items-end justify-between mb-4">
-        <div className="form-row !mb-0 w-full sm:w-[320px]">
-          <label>Buscar</label>
+        <div className=" !mb-0 w-full sm:w-[320px]">
+          <label className="lab">Buscar</label>
           <input placeholder="Nome do projeto" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         <div className="flex gap-2 items-end">
-          <div className="form-row !mb-0 w-[240px]">
-            <label>Novo projeto</label>
+          <div className=" !mb-0 w-[240px]">
+            <label className="lab">Novo projeto</label>
             <input placeholder="Ex.: Suporte câmera" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && create()} />
           </div>
-          <button className="btn btn--primary" onClick={create} disabled={creating}>
+          <button className="btn btn--go" onClick={create} disabled={creating}>
             <Icon name="mais" size={15} /> Criar
           </button>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card__body !p-0">
+      <div className="panel">
+        <div className="panel__body !p-0">
           {filtered.length === 0 ? (
             <div className="p-10 text-center">
-              <div className="upro-ic mx-auto mb-3 !w-12 !h-12"><Icon name="cubo" size={24} /></div>
-              <p className="text-navy font-semibold m-0 mb-1">Nenhum projeto por aqui</p>
-              <p className="text-muted m-0 text-[13px]">Crie um projeto acima e envie seus arquivos STL, OBJ ou 3MF.</p>
+              <div className="text-mint mx-auto mb-3 !w-12 !h-12"><Icon name="cubo" size={24} /></div>
+              <p className="text-ice font-semibold m-0 mb-1">Nenhum projeto por aqui</p>
+              <p className="text-fog m-0 text-[13px]">Crie um projeto acima e envie seus arquivos STL, OBJ ou 3MF.</p>
             </div>
           ) : (
-            <table className="data">
+            <table className="grid">
               <thead>
                 <tr><th>Projeto</th><th>Descrição</th><th>Criado</th><th>Atualizado</th><th></th></tr>
               </thead>
               <tbody>
                 {filtered.map((p) => (
                   <tr key={p.id} className="cursor-pointer" onClick={() => navigate(`/projeto/${p.id}`)}>
-                    <td className="font-semibold text-navy">
-                      <span className="inline-flex items-center gap-3"><span className="row-ic"><Icon name="cubo" size={15} /></span>{p.name}</span>
+                    <td className="font-semibold text-ice">
+                      <span className="inline-flex items-center gap-3"><span className="text-mint"><Icon name="cubo" size={15} /></span>{p.name}</span>
                     </td>
-                    <td className="text-muted">{p.description || "Não informado"}</td>
+                    <td className="text-fog">{p.description || "Não informado"}</td>
                     <td>{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
                     <td>{new Date(p.updated_at).toLocaleDateString("pt-BR")}</td>
                     <td className="text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                      <button className="btn btn--ghost btn--sm mr-1" onClick={() => navigate(`/projeto/${p.id}`)}>Abrir</button>
+                      <button className="btn btn--line btn--sm mr-1" onClick={() => navigate(`/projeto/${p.id}`)}>Abrir</button>
                       <button className="btn btn--danger btn--sm" onClick={() => remove(p.id)}><Icon name="lixeira" size={13} /></button>
                     </td>
                   </tr>

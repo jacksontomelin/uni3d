@@ -1,165 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* UniController design system — navy #0f2d4a + azure #0284c7
-   Mesmo padrão do UNIPROCURAÇÕES: sidebar navy em degradê, topbar branca,
-   cards brancos com borda e sombra suave, tabelas com cabeçalho navy,
-   campos upro-campo com label em cima e valor embaixo. */
+/* Uni3D — bancada de fabricação digital.
+   Grafite escuro + verde-LCD (mint). Tipografia Space Grotesk (display,
+   geométrica, cara de engenharia) + Inter (corpo). Space Mono para dados. */
 
 @layer base {
-  html { color-scheme: light; }
-  body { @apply bg-papel text-ink text-[14px] leading-relaxed antialiased; }
-  a { @apply text-azure; }
+  html { color-scheme: dark; }
+  body { @apply bg-graphite-900 text-ice font-sans text-[14px] antialiased; }
+  /* grade de bancada sutil no fundo */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(42,49,64,.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(42,49,64,.25) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 50% 0%, black, transparent 75%);
+  }
+  #root { position: relative; z-index: 1; }
+  ::selection { background: #00e5a0; color: #0a0e14; }
 }
 
 @layer components {
   /* ── Layout ─────────────────────────────────── */
   .app { @apply flex min-h-screen; }
-  .sidebar {
-    @apply w-[230px] shrink-0 flex flex-col text-slate-300;
-    background: linear-gradient(180deg, #0f2d4a, #163d63);
+  .rail {
+    @apply w-[76px] shrink-0 flex flex-col items-center py-5 gap-1
+           bg-graphite-800 border-r border-edge;
   }
-  .sidebar__brand { @apply px-5 py-[18px] flex items-center gap-[10px] border-b border-white/10; }
-  .sidebar__brand-text { @apply text-white font-bold text-[15px] tracking-[.3px] leading-tight; }
-  .sidebar__brand-text small { @apply block font-normal text-[11px] text-azure-light; }
-  .sidebar__nav { @apply py-[10px] flex-1; }
-  .sidebar__link {
-    @apply flex items-center gap-[10px] px-5 py-[10px] text-[13.5px] text-slate-300 border-l-[3px] border-transparent transition-colors;
+  .rail__logo { @apply mb-4; }
+  .rail__link {
+    @apply w-11 h-11 rounded-xl flex items-center justify-center text-fog
+           relative transition-colors;
   }
-  .sidebar__link:hover { @apply bg-white/[.06] text-white; }
-  .sidebar__link.active { @apply bg-azure/[.18] border-azure-light text-white; }
-  .sidebar__foot { @apply px-5 py-[14px] border-t border-white/10 text-[12px]; }
+  .rail__link:hover { @apply text-ice bg-graphite-600; }
+  .rail__link.active { @apply text-mint bg-mint-dim; }
+  .rail__link.active::before {
+    content: ""; position: absolute; left: -20px; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 22px; border-radius: 2px; background: #00e5a0;
+    box-shadow: 0 0 12px #00e5a0;
+  }
+  .rail__tip {
+    @apply absolute left-[54px] px-2 py-1 rounded-md bg-graphite-500 text-ice text-[12px]
+           whitespace-nowrap opacity-0 pointer-events-none transition-opacity z-20 border border-edge;
+  }
+  .rail__link:hover .rail__tip { @apply opacity-100; }
 
   .main { @apply flex-1 flex flex-col min-w-0; }
-  .topbar { @apply bg-white border-b border-line px-6 py-3 flex items-center justify-between; }
-  .topbar__title { @apply text-[17px] font-bold text-navy; }
-  .topbar__user { @apply text-[13px] text-muted flex items-center gap-3; }
-  .content { @apply p-6 flex-1; }
-  .footer { @apply text-center text-[12px] text-muted py-4 border-t border-line bg-white; }
+  .bar {
+    @apply h-14 shrink-0 flex items-center gap-4 px-6 border-b border-edge bg-graphite-800/80 backdrop-blur;
+  }
+  .bar__title { @apply font-display font-medium text-[15px] text-ice tracking-tight; }
+  .bar__path { @apply font-mono text-[11px] text-fog2; }
+  .content { @apply flex-1 p-6; }
 
-  /* ── Cards ──────────────────────────────────── */
-  .card { @apply bg-white border border-line rounded-[10px] shadow-card; }
-  .card__head { @apply px-[18px] py-[14px] border-b border-line font-semibold text-navy flex items-center justify-between; }
-  .card__body { @apply p-[18px]; }
+  /* ── Painel / superfícies ───────────────────── */
+  .panel { @apply bg-graphite-700 border border-edge rounded-2xl; }
+  .panel__head {
+    @apply px-5 py-3.5 border-b border-edge flex items-center justify-between;
+  }
+  .panel__title { @apply font-display text-[13px] font-medium text-ice flex items-center gap-2; }
+  .panel__body { @apply p-5; }
 
-  /* Seção UPRO: ícone azul + título uppercase */
-  .upro-head { @apply flex items-center gap-2 mb-3; }
-  .upro-ic { @apply w-7 h-7 rounded-md bg-azure-soft text-azure flex items-center justify-center shrink-0; }
-  .upro-ic svg { @apply w-4 h-4; }
-  .upro-tt { @apply text-[12px] font-bold text-navy uppercase tracking-[.4px]; }
+  /* ── Métrica (dado técnico grande) ──────────── */
+  .metric { @apply bg-graphite-700 border border-edge rounded-2xl p-5 relative overflow-hidden; }
+  .metric__k { @apply font-mono text-[11px] text-fog uppercase tracking-wider; }
+  .metric__v { @apply font-display text-[32px] font-semibold text-ice leading-none mt-2; }
+  .metric__u { @apply text-fog text-[14px] font-normal; }
+  .metric__spark { @apply absolute right-4 top-4 text-mint opacity-60; }
 
-  /* Campo UPRO: label pequena em cima, valor embaixo */
-  .upro-campo { @apply py-2 border-b border-line last:border-0; }
-  .upro-lb { @apply text-[11px] text-muted uppercase tracking-[.3px] block; }
-  .upro-vl { @apply text-[14px] text-ink font-medium block mt-[2px]; }
-
-  /* Stats */
-  .stat-grid { @apply grid gap-4 mb-6; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-  .stat { @apply bg-white border border-line rounded-[10px] px-[18px] py-4 shadow-card; }
-  .stat__label { @apply text-[12px] text-muted uppercase tracking-[.4px]; }
-  .stat__value { @apply text-[26px] font-bold text-navy mt-1; }
-
-  /* ── Tabelas ────────────────────────────────── */
-  table.data { @apply w-full border-collapse bg-white rounded-[10px] overflow-hidden; }
-  table.data thead th { @apply bg-navy text-white text-left px-[14px] py-[10px] text-[12px] uppercase tracking-[.3px] font-semibold; }
-  table.data tbody td { @apply px-[14px] py-[10px] border-b border-line; }
-  table.data tbody tr:hover { @apply bg-slate-50; }
+  /* ── Campo de ficha (mono, técnico) ─────────── */
+  .field { @apply flex items-baseline justify-between py-2.5 border-b border-edge/60 last:border-0; }
+  .field__k { @apply font-mono text-[11px] text-fog uppercase tracking-wide; }
+  .field__v { @apply font-mono text-[13px] text-ice; }
 
   /* ── Botões ─────────────────────────────────── */
-  .btn { @apply inline-flex items-center gap-[6px] px-4 py-2 rounded-lg border border-transparent text-[13.5px] font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
-  .btn--primary { @apply bg-azure text-white hover:bg-azure-dark; }
-  .btn--ghost { @apply bg-white border-line text-navy hover:bg-slate-50; }
-  .btn--sm { @apply px-3 py-[6px] text-[12.5px]; }
-  .btn--danger { @apply bg-white border-line text-danger hover:bg-red-50; }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 h-10 rounded-xl
+           font-display text-[13px] font-medium cursor-pointer transition-all
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn--go { @apply bg-mint text-graphite-900 hover:bg-mint-dark hover:shadow-glow; }
+  .btn--line { @apply border border-edge text-ice hover:border-mint hover:text-mint bg-transparent; }
+  .btn--ghost { @apply text-fog hover:text-ice hover:bg-graphite-600; }
+  .btn--sm { @apply h-8 px-3 text-[12px] rounded-lg; }
+  .btn--danger { @apply border border-edge text-filament hover:border-filament bg-transparent; }
 
-  /* ── Pills ──────────────────────────────────── */
-  .pill { @apply inline-block px-[10px] py-[3px] rounded-full text-[11.5px] font-semibold; }
-  .pill--azul { @apply bg-azure-soft text-azure-dark; }
-  .pill--ok { @apply bg-green-100 text-green-700; }
-  .pill--warn { @apply bg-amber-100 text-amber-700; }
-  .pill--danger { @apply bg-red-100 text-red-700; }
-  .pill--neutro { @apply bg-slate-100 text-slate-600; }
+  /* ── Chips / status ─────────────────────────── */
+  .chip { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px]; }
+  .chip--mint { @apply bg-mint-dim text-mint; }
+  .chip--fog { @apply bg-graphite-600 text-fog; }
+  .chip--fila { @apply bg-filament/10 text-filament; }
+  .dot { @apply w-1.5 h-1.5 rounded-full; }
 
   /* ── Forms ──────────────────────────────────── */
-  .form-row { @apply mb-[14px]; }
-  .form-row label { @apply block text-[12.5px] font-semibold text-navy mb-[5px]; }
-  .form-row input, .form-row select, .form-row textarea {
-    @apply w-full px-3 py-[9px] border border-line rounded-lg text-[14px] font-[inherit] bg-white text-ink;
+  .lab { @apply block font-mono text-[11px] text-fog uppercase tracking-wide mb-2; }
+  .inp {
+    @apply w-full h-11 px-4 rounded-xl bg-graphite-900 border border-edge text-ice text-[14px]
+           placeholder:text-fog2 focus:outline-none focus:border-mint transition-colors;
   }
-  .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
-    @apply outline-none border-azure;
-    box-shadow: 0 0 0 3px rgba(2,132,199,.12);
+  .inp:focus { box-shadow: 0 0 0 3px rgba(0,229,160,.12); }
+
+  /* ── Tabela ─────────────────────────────────── */
+  table.grid { @apply w-full border-collapse; }
+  table.grid thead th {
+    @apply text-left px-4 py-3 font-mono text-[11px] text-fog uppercase tracking-wide border-b border-edge;
   }
+  table.grid tbody td { @apply px-4 py-3 border-b border-edge/50 text-[13px]; }
+  table.grid tbody tr { @apply transition-colors cursor-pointer; }
+  table.grid tbody tr:hover { @apply bg-graphite-600/50; }
 
-  .flash { @apply px-4 py-3 rounded-lg mb-4 text-[13.5px]; }
-  .flash--notice { @apply bg-green-100 text-green-700 border border-green-300; }
-  .flash--alert { @apply bg-red-100 text-red-700 border border-red-300; }
+  .flash { @apply px-4 py-3 rounded-xl mb-4 text-[13px] font-mono border; }
+  .flash--ok { @apply bg-mint-dim text-mint border-mint/30; }
+  .flash--err { @apply bg-filament/10 text-filament border-filament/30; }
 
-  /* ── Login ──────────────────────────────────── */
-  .login-wrap {
-    @apply min-h-screen flex items-center justify-center p-4;
-    background: linear-gradient(135deg, #0f2d4a, #163d63);
+  .viewer-wrap { @apply relative rounded-2xl overflow-hidden border border-edge bg-graphite-900; }
+  .viewer-bar { @apply absolute top-3 left-3 z-10 flex gap-2; }
+  .viewer-hud {
+    @apply absolute bottom-0 inset-x-0 px-4 py-2.5 bg-graphite-900/90 border-t border-edge
+           font-mono text-[11px] text-fog flex justify-between backdrop-blur;
   }
-  .login-card { @apply bg-white rounded-[14px] p-9 w-[360px] shadow-login; }
-  .login-card h1 { @apply text-navy text-[20px] font-bold m-0 mb-1 text-center; }
-  .login-card p.sub { @apply text-muted text-[13px] text-center m-0 mb-6; }
-
-  /* ── Viewer ─────────────────────────────────── */
-  .viewer-wrap { @apply relative rounded-[10px] overflow-hidden border border-line bg-white shadow-card; }
-  .viewer-toolbar { @apply absolute top-3 left-3 z-10 flex gap-2; }
-  .viewer-status { @apply absolute bottom-0 left-0 right-0 px-4 py-2 bg-white/90 border-t border-line text-[12px] text-muted flex justify-between; }
-}
-
-/* ── Refinamentos visuais v2 ───────────────────────────────── */
-@layer components {
-  .sidebar__link.active { box-shadow: inset 0 0 0 1px rgba(56,189,248,.15); }
-  .sidebar__link svg { @apply opacity-80; }
-  .sidebar__link.active svg { @apply opacity-100 text-azure-light; }
-
-  .topbar { @apply py-[10px] pr-5; }
-  .topbar__search { @apply hidden md:flex items-center gap-2 bg-papel border border-line rounded-lg px-3 py-[7px] w-[300px] text-[13px] text-muted; }
-  .topbar__search input { @apply bg-transparent outline-none flex-1 text-ink placeholder:text-slate-400; }
-  .avatar { @apply w-9 h-9 rounded-full bg-navy text-white text-[12px] font-bold flex items-center justify-center shrink-0 border-2 border-azure-light/40; }
-
-  .hero-banner {
-    @apply rounded-[14px] p-6 mb-6 text-white relative overflow-hidden shadow-card;
-    background: linear-gradient(120deg, #0f2d4a 0%, #163d63 55%, #0369a1 100%);
-  }
-  .hero-banner::after {
-    content: ""; position: absolute; right: -60px; top: -60px; width: 260px; height: 260px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(56,189,248,.28), transparent 65%);
-  }
-  .hero-banner h2 { @apply text-[22px] font-bold m-0 mb-1 tracking-tight; }
-  .hero-banner p { @apply text-slate-200 m-0 text-[13.5px]; }
-
-  .stat { @apply relative overflow-hidden flex items-center gap-4; }
-  .stat__icon { @apply w-11 h-11 rounded-[10px] flex items-center justify-center shrink-0; }
-  .stat__icon--azure { @apply bg-azure-soft text-azure; }
-  .stat__icon--navy { @apply bg-slate-100 text-navy; }
-  .stat__icon--ok { @apply bg-green-50 text-green-600; }
-  .stat__icon--warn { @apply bg-amber-50 text-amber-600; }
-  .stat__value { @apply mt-0 text-[24px] leading-tight; }
-
-  .card { @apply transition-shadow; }
-  .card--hover:hover { box-shadow: 0 6px 18px rgba(15,45,74,.10), 0 1px 3px rgba(15,45,74,.06); }
-
-  table.data tbody tr { @apply transition-colors; }
-  .row-ic { @apply w-8 h-8 rounded-lg bg-azure-soft text-azure flex items-center justify-center shrink-0; }
-
-  .login-split { @apply min-h-screen grid lg:grid-cols-[1.1fr_1fr]; }
-  .login-side {
-    @apply hidden lg:flex flex-col justify-between p-12 text-white relative overflow-hidden;
-    background: linear-gradient(135deg, #0f2d4a 0%, #163d63 60%, #0369a1 100%);
-  }
-  .login-side::before {
-    content: ""; position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-  .login-side > * { position: relative; }
-  .login-form { @apply flex items-center justify-center p-6 bg-papel; }
-  .login-card { @apply w-full max-w-[400px] shadow-card border border-line; }
-  .feature-line { @apply flex items-start gap-3 text-[14px] text-slate-200; }
-  .feature-line .upro-ic { @apply bg-white/10 text-azure-light; }
 }

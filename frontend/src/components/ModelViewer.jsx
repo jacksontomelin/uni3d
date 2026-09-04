@@ -22,7 +22,7 @@ function STLModel({ url, wireframe, onInfo }) {
   return (
     <Center top>
       <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} castShadow receiveShadow>
-        <meshStandardMaterial color="#0284c7" roughness={0.45} metalness={0.15} wireframe={wireframe} />
+        <meshStandardMaterial color="#00e5a0" roughness={0.45} metalness={0.15} wireframe={wireframe} />
       </mesh>
     </Center>
   );
@@ -49,7 +49,7 @@ function ThreeMFModel({ url, wireframe }) {
 }
 
 function Loading() {
-  return <Html center><div className="text-azure text-[13px] font-semibold">Carregando modelo…</div></Html>;
+  return <Html center><div className="text-mint text-[13px] font-semibold">Carregando modelo…</div></Html>;
 }
 
 function Mesa({ size = 220 }) {
@@ -59,17 +59,17 @@ function Mesa({ size = 220 }) {
         args={[size, size]}
         cellSize={10}
         cellThickness={0.6}
-        cellColor="#cbd5e1"
+        cellColor="#2a3140"
         sectionSize={50}
         sectionThickness={1.1}
-        sectionColor="#0284c7"
+        sectionColor="#00b37e"
         fadeDistance={600}
         fadeStrength={1}
         position={[0, 0, 0]}
       />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow>
         <planeGeometry args={[size, size]} />
-        <meshStandardMaterial color="#ffffff" roughness={1} />
+        <meshStandardMaterial color="#0d1117" roughness={1} />
       </mesh>
     </>
   );
@@ -92,11 +92,11 @@ export default function ModelViewer({ fileUrl, format = "stl", fileName, onInfo 
 
   return (
     <div className="viewer-wrap h-full min-h-[560px]">
-      <div className="viewer-toolbar">
-        <button className="btn btn--ghost btn--sm" onClick={() => setWireframe((w) => !w)}>
+      <div className="viewer-bar">
+        <button className="btn btn--line btn--sm" onClick={() => setWireframe((w) => !w)}>
           <Icon name="malha" size={14} /> {wireframe ? "Sólido" : "Wireframe"}
         </button>
-        <select className="btn btn--ghost btn--sm !pr-7" value={mesa} onChange={(e) => setMesa(Number(e.target.value))}>
+        <select className="btn btn--line btn--sm !pr-7" value={mesa} onChange={(e) => setMesa(Number(e.target.value))}>
           <option value={180}>Mesa 180×180</option>
           <option value={220}>Mesa 220×220</option>
           <option value={250}>Mesa 250×250</option>
@@ -109,7 +109,7 @@ export default function ModelViewer({ fileUrl, format = "stl", fileName, onInfo 
         camera={{ position: [180, 160, 180], fov: 40, near: 0.1, far: 5000 }}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
       >
-        <color attach="background" args={["#ffffff"]} />
+        <color attach="background" args={["#0a0e14"]} />
         <ambientLight intensity={0.75} />
         <directionalLight position={[120, 220, 120]} intensity={1.1} castShadow shadow-mapSize={[2048, 2048]} />
         <directionalLight position={[-120, 100, -120]} intensity={0.35} />
@@ -120,13 +120,13 @@ export default function ModelViewer({ fileUrl, format = "stl", fileName, onInfo 
 
       {!fileUrl && (
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="upro-ic !w-14 !h-14 mb-3"><Icon name="cubo" size={28} /></div>
-          <p className="text-navy font-semibold m-0">Nenhum modelo selecionado</p>
-          <p className="text-muted text-[13px] m-0">Selecione um arquivo ao lado ou envie um STL, OBJ ou 3MF</p>
+          <div className="text-mint !w-14 !h-14 mb-3"><Icon name="cubo" size={28} /></div>
+          <p className="text-ice font-semibold m-0">Nenhum modelo selecionado</p>
+          <p className="text-fog text-[13px] m-0">Selecione um arquivo ao lado ou envie um STL, OBJ ou 3MF</p>
         </div>
       )}
 
-      <div className="viewer-status">
+      <div className="viewer-hud">
         <span>{fileName || "—"}{info ? ` · ${info.vertices.toLocaleString("pt-BR")} vértices` : ""}</span>
         <span>Arrastar: girar · Scroll: zoom · Botão direito: mover</span>
       </div>
