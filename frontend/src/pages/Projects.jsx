@@ -53,13 +53,13 @@ export default function Projects() {
         </div>
       </div>
 
-      <div className="panel">
-        <div className="panel__body !p-0">
+      <div className="card">
+        <div className="card__b !p-0">
           {filtered.length === 0 ? (
             <div className="p-10 text-center">
-              <div className="text-mint mx-auto mb-3 !w-12 !h-12"><Icon name="cubo" size={24} /></div>
-              <p className="text-ice font-semibold m-0 mb-1">Nenhum projeto por aqui</p>
-              <p className="text-fog m-0 text-[13px]">Crie um projeto acima e envie seus arquivos STL, OBJ ou 3MF.</p>
+              <div className="text-vscyan mx-auto mb-3 !w-12 !h-12"><Icon name="cubo" size={24} /></div>
+              <p className="text-vstext font-semibold m-0 mb-1">Nenhum projeto por aqui</p>
+              <p className="text-vsdim m-0 text-[13px]">Crie um projeto acima e envie seus arquivos STL, OBJ ou 3MF.</p>
             </div>
           ) : (
             <table className="grid">
@@ -69,10 +69,10 @@ export default function Projects() {
               <tbody>
                 {filtered.map((p) => (
                   <tr key={p.id} className="cursor-pointer" onClick={() => navigate(`/projeto/${p.id}`)}>
-                    <td className="font-semibold text-ice">
-                      <span className="inline-flex items-center gap-3"><span className="text-mint"><Icon name="cubo" size={15} /></span>{p.name}</span>
+                    <td className="font-semibold text-vstext">
+                      <span className="inline-flex items-center gap-3"><span className="text-vscyan"><Icon name="cubo" size={15} /></span>{p.name}</span>
                     </td>
-                    <td className="text-fog">{p.description || "Não informado"}</td>
+                    <td className="text-vsdim">{p.description || "Não informado"}</td>
                     <td>{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
                     <td>{new Date(p.updated_at).toLocaleDateString("pt-BR")}</td>
                     <td className="text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>

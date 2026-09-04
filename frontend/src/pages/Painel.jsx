@@ -11,53 +11,50 @@ export default function Painel() {
   const nome = (user?.name || "").split(" ")[0];
 
   const metrics = [
-    { k: "Projetos", v: projects.length, u: "", ic: "cube" },
-    { k: "Modelos 3D", v: projects.reduce((s, p) => s + (p.file_count || 0), 0), u: "", ic: "layers" },
-    { k: "Fatiados", v: 0, u: "/mês", ic: "sliders" },
-    { k: "Impressoras", v: 0, u: "", ic: "printer" },
+    { k: "projetos", v: projects.length },
+    { k: "modelos_3d", v: projects.reduce((s, p) => s + (p.file_count || 0), 0) },
+    { k: "fatiados_mes", v: 0 },
+    { k: "impressoras", v: 0 },
   ];
 
   return (
     <>
-      <div className="mb-6 flex items-end justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="font-display text-[26px] font-semibold tracking-tight">{nome ? `Olá, ${nome}` : "Bancada"}</h1>
-          <p className="text-fog text-[14px] mt-1">Envie um modelo, confira a malha e gere o G-code.</p>
-        </div>
-        <div className="flex gap-2">
-          <Link to="/projetos" className="btn btn--go"><Icon name="plus" size={16} /> Novo projeto</Link>
-          <Link to="/imagem-3d" className="btn btn--line"><Icon name="ruler" size={16} /> Imagem → 3D</Link>
-        </div>
+      <div className="mb-6">
+        <p className="comment text-[13px]">{`// Uni3D — painel de controle`}</p>
+        <h1 className="text-[22px] text-vstext mt-1">
+          <span className="kw">const</span> <span className="text-vscyan">bemVindo</span> = <span className="str">"{nome || "Bancada"}"</span>
+        </h1>
       </div>
 
-      <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))" }}>
+      <div className="flex gap-2 mb-6">
+        <Link to="/projetos" className="btn btn--go"><Icon name="plus" size={15} /> novo projeto</Link>
+        <Link to="/imagem-3d" className="btn btn--line"><Icon name="ruler" size={15} /> imagem → 3D</Link>
+      </div>
+
+      <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))" }}>
         {metrics.map((m) => (
           <div className="metric" key={m.k}>
-            <Icon name={m.ic} size={18} className="metric__spark" />
             <div className="metric__k">{m.k}</div>
-            <div className="metric__v">{m.v}<span className="metric__u">{m.u}</span></div>
+            <div className="metric__v">{m.v}</div>
           </div>
         ))}
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr]">
-        <div className="panel">
-          <div className="panel__head">
-            <span className="panel__title"><Icon name="clock" size={15} className="text-mint" /> Projetos recentes</span>
-            <Link to="/projetos" className="btn btn--ghost btn--sm">Ver todos</Link>
-          </div>
-          <div className="panel__body !p-0">
+        <div className="card">
+          <div className="card__h"><span className="flex items-center gap-2"><Icon name="cube" size={14} className="text-vscyan" /> projetos_recentes.log</span><Link to="/projetos" className="btn btn--ghost !h-6 text-[12px]">ver todos</Link></div>
+          <div className="card__b !p-0">
             {projects.length === 0 ? (
-              <p className="text-fog p-5 m-0 font-mono text-[12px]">Nenhum projeto ainda. Crie o primeiro em Projetos.</p>
+              <p className="comment p-4 m-0">{`// nenhum projeto ainda — crie o primeiro em projetos.json`}</p>
             ) : (
               <table className="grid">
-                <thead><tr><th>Projeto</th><th>Atualizado</th><th></th></tr></thead>
+                <thead><tr><th>projeto</th><th>atualizado</th><th></th></tr></thead>
                 <tbody>
                   {projects.slice(0, 6).map((p) => (
                     <tr key={p.id}>
-                      <td><span className="flex items-center gap-2.5"><Icon name="cube" size={15} className="text-mint" /><span className="text-ice">{p.name}</span></span></td>
-                      <td className="font-mono text-fog text-[12px]">{new Date(p.updated_at).toLocaleDateString("pt-BR")}</td>
-                      <td className="text-right"><Link to={`/projeto/${p.id}`} className="btn btn--ghost btn--sm">Abrir →</Link></td>
+                      <td><span className="flex items-center gap-2"><Icon name="cube" size={14} className="text-vscyan" /><span className="text-vstext">{p.name}</span></span></td>
+                      <td className="text-vsdim">{new Date(p.updated_at).toLocaleDateString("pt-BR")}</td>
+                      <td className="text-right"><Link to={`/projeto/${p.id}`} className="text-vsblue2 hover:underline">abrir →</Link></td>
                     </tr>
                   ))}
                 </tbody>
@@ -66,13 +63,14 @@ export default function Painel() {
           </div>
         </div>
 
-        <div className="panel">
-          <div className="panel__head"><span className="panel__title"><Icon name="check" size={15} className="text-mint" /> Fluxo</span></div>
-          <div className="panel__body space-y-1">
-            {["Enviar STL, OBJ ou 3MF", "Conferir malha e dimensões", "Escolher perfil e fatiar", "Baixar G-code e imprimir"].map((t, i) => (
-              <div key={i} className="flex items-center gap-3 py-2">
-                <span className="w-7 h-7 rounded-lg bg-graphite-600 border border-edge font-mono text-[12px] text-mint flex items-center justify-center shrink-0">{i + 1}</span>
-                <span className="text-[13px] text-ice">{t}</span>
+        <div className="card">
+          <div className="card__h"><span className="flex items-center gap-2"><Icon name="check" size={14} className="text-vsgreen" /> fluxo.md</span></div>
+          <div className="card__b space-y-1">
+            {["enviar STL, OBJ ou 3MF", "conferir malha e dimensões", "escolher perfil e fatiar", "baixar G-code e imprimir"].map((t, i) => (
+              <div key={i} className="flex items-center gap-3 py-1.5">
+                <span className="text-vsdim text-[12px] w-6 text-right">{i + 1}</span>
+                <span className="text-vsblue2">›</span>
+                <span className="text-[13px] text-vstext">{t}</span>
               </div>
             ))}
           </div>

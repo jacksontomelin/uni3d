@@ -1,125 +1,129 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Uni3D — bancada de fabricação digital.
-   Grafite escuro + verde-LCD (mint). Tipografia Space Grotesk (display,
-   geométrica, cara de engenharia) + Inter (corpo). Space Mono para dados. */
+/* Uni3D — interface estilo VS Code (editor de fabricação 3D).
+   Activity bar + file explorer + abas + editor. Paleta Dark+.
+   Tudo em JetBrains Mono, syntax highlighting como identidade. */
 
 @layer base {
   html { color-scheme: dark; }
-  body { @apply bg-graphite-900 text-ice font-sans text-[14px] antialiased; }
-  /* grade de bancada sutil no fundo */
-  body::before {
-    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(42,49,64,.25) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(42,49,64,.25) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse at 50% 0%, black, transparent 75%);
-  }
-  #root { position: relative; z-index: 1; }
-  ::selection { background: #00e5a0; color: #0a0e14; }
+  body { @apply bg-vsbg text-vstext font-mono text-[13px] antialiased; }
+  ::selection { background: #264f78; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #424245; border-radius: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
 }
 
 @layer components {
-  /* ── Layout ─────────────────────────────────── */
-  .app { @apply flex min-h-screen; }
-  .rail {
-    @apply w-[76px] shrink-0 flex flex-col items-center py-5 gap-1
-           bg-graphite-800 border-r border-edge;
-  }
-  .rail__logo { @apply mb-4; }
-  .rail__link {
-    @apply w-11 h-11 rounded-xl flex items-center justify-center text-fog
-           relative transition-colors;
-  }
-  .rail__link:hover { @apply text-ice bg-graphite-600; }
-  .rail__link.active { @apply text-mint bg-mint-dim; }
-  .rail__link.active::before {
-    content: ""; position: absolute; left: -20px; top: 50%; transform: translateY(-50%);
-    width: 3px; height: 22px; border-radius: 2px; background: #00e5a0;
-    box-shadow: 0 0 12px #00e5a0;
-  }
-  .rail__tip {
-    @apply absolute left-[54px] px-2 py-1 rounded-md bg-graphite-500 text-ice text-[12px]
-           whitespace-nowrap opacity-0 pointer-events-none transition-opacity z-20 border border-edge;
-  }
-  .rail__link:hover .rail__tip { @apply opacity-100; }
+  /* ── Shell IDE ──────────────────────────────── */
+  .ide { @apply flex h-screen overflow-hidden; }
 
-  .main { @apply flex-1 flex flex-col min-w-0; }
-  .bar {
-    @apply h-14 shrink-0 flex items-center gap-4 px-6 border-b border-edge bg-graphite-800/80 backdrop-blur;
+  /* Activity bar (ícones à esquerda, mais estreita) */
+  .actbar { @apply w-12 shrink-0 bg-vsact flex flex-col items-center py-2 gap-1; }
+  .actbar__i {
+    @apply w-12 h-12 flex items-center justify-center text-vsdim relative cursor-pointer transition-colors;
   }
-  .bar__title { @apply font-display font-medium text-[15px] text-ice tracking-tight; }
-  .bar__path { @apply font-mono text-[11px] text-fog2; }
-  .content { @apply flex-1 p-6; }
-
-  /* ── Painel / superfícies ───────────────────── */
-  .panel { @apply bg-graphite-700 border border-edge rounded-2xl; }
-  .panel__head {
-    @apply px-5 py-3.5 border-b border-edge flex items-center justify-between;
+  .actbar__i:hover { @apply text-vstext; }
+  .actbar__i.active { @apply text-white; }
+  .actbar__i.active::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #fff;
   }
-  .panel__title { @apply font-display text-[13px] font-medium text-ice flex items-center gap-2; }
-  .panel__body { @apply p-5; }
 
-  /* ── Métrica (dado técnico grande) ──────────── */
-  .metric { @apply bg-graphite-700 border border-edge rounded-2xl p-5 relative overflow-hidden; }
-  .metric__k { @apply font-mono text-[11px] text-fog uppercase tracking-wider; }
-  .metric__v { @apply font-display text-[32px] font-semibold text-ice leading-none mt-2; }
-  .metric__u { @apply text-fog text-[14px] font-normal; }
-  .metric__spark { @apply absolute right-4 top-4 text-mint opacity-60; }
+  /* Sidebar (explorer de arquivos) */
+  .explorer { @apply w-56 shrink-0 bg-vsside flex flex-col; }
+  .explorer__h { @apply px-4 py-2.5 text-[11px] uppercase tracking-wider text-vsdim; }
+  .explorer__i {
+    @apply flex items-center gap-2 px-4 py-1 text-[13px] text-vstext cursor-pointer transition-colors;
+  }
+  .explorer__i:hover { @apply bg-vsline/40; }
+  .explorer__i.active { @apply bg-vssel/60 text-white; }
 
-  /* ── Campo de ficha (mono, técnico) ─────────── */
-  .field { @apply flex items-baseline justify-between py-2.5 border-b border-edge/60 last:border-0; }
-  .field__k { @apply font-mono text-[11px] text-fog uppercase tracking-wide; }
-  .field__v { @apply font-mono text-[13px] text-ice; }
+  /* Área principal */
+  .editor { @apply flex-1 flex flex-col min-w-0 bg-vsbg; }
 
-  /* ── Botões ─────────────────────────────────── */
+  /* Barra de abas */
+  .tabs { @apply flex bg-vstab border-b border-vsline h-9 shrink-0 overflow-x-auto; }
+  .tab {
+    @apply flex items-center gap-2 px-4 h-9 text-[13px] text-vsdim border-r border-vsline
+           cursor-pointer whitespace-nowrap transition-colors;
+  }
+  .tab:hover { @apply text-vstext; }
+  .tab.active { @apply bg-vstabon text-vstext; }
+  .tab.active::before {
+    content: ""; position: absolute; margin-top: -34px; height: 2px; width: 100%; margin-left: -16px; background: #007acc;
+    /* top accent handled by border below in JSX */
+  }
+
+  /* Breadcrumb + conteúdo */
+  .crumb { @apply px-4 py-1.5 text-[12px] text-vsdim border-b border-vsline/50 flex items-center gap-1.5; }
+  .work { @apply flex-1 overflow-auto p-6; }
+
+  /* Status bar (rodapé azul do VS Code) */
+  .statusbar {
+    @apply h-6 shrink-0 bg-vsblue text-white text-[11px] flex items-center gap-4 px-3;
+  }
+  .statusbar__i { @apply flex items-center gap-1.5; }
+
+  /* ── Elementos de conteúdo ──────────────────── */
+  /* Cartão = "arquivo de código" com header */
+  .card { @apply bg-vsside border border-vsline rounded-md overflow-hidden; }
+  .card__h { @apply px-4 py-2.5 bg-vstab border-b border-vsline text-[12px] text-vstext flex items-center justify-between; }
+  .card__b { @apply p-4; }
+
+  /* Métrica estilo variável de código: nome = valor */
+  .metric { @apply bg-vsside border border-vsline rounded-md p-4; }
+  .metric__k { @apply text-vsblue2 text-[12px]; }
+  .metric__v { @apply text-vscyan text-[28px] font-semibold leading-none mt-2; }
+  .metric__u { @apply text-vsdim text-[13px] font-normal; }
+
+  /* Campo ficha: chave: valor com cores de syntax */
+  .kv { @apply flex items-baseline gap-2 py-1.5 border-b border-vsline/40 last:border-0; }
+  .kv__k { @apply text-vsblue2 text-[12px]; }
+  .kv__k::after { content: ":"; @apply text-vstext; }
+  .kv__v { @apply text-vsorange text-[13px] ml-auto; }
+  .kv__v--num { @apply text-vscyan; }
+  .kv__v--ok { @apply text-vsgreen; }
+
+  /* Botões estilo VS Code */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-4 h-10 rounded-xl
-           font-display text-[13px] font-medium cursor-pointer transition-all
-           disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-3 h-8 rounded text-[13px] cursor-pointer
+           transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
   }
-  .btn--go { @apply bg-mint text-graphite-900 hover:bg-mint-dark hover:shadow-glow; }
-  .btn--line { @apply border border-edge text-ice hover:border-mint hover:text-mint bg-transparent; }
-  .btn--ghost { @apply text-fog hover:text-ice hover:bg-graphite-600; }
-  .btn--sm { @apply h-8 px-3 text-[12px] rounded-lg; }
-  .btn--danger { @apply border border-edge text-filament hover:border-filament bg-transparent; }
+  .btn--go { @apply bg-vsblue text-white hover:bg-[#1b8ad0]; }
+  .btn--line { @apply border border-vsline text-vstext hover:bg-vsline/40; }
+  .btn--ghost { @apply text-vsdim hover:text-vstext hover:bg-vsline/40; }
 
-  /* ── Chips / status ─────────────────────────── */
-  .chip { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px]; }
-  .chip--mint { @apply bg-mint-dim text-mint; }
-  .chip--fog { @apply bg-graphite-600 text-fog; }
-  .chip--fila { @apply bg-filament/10 text-filament; }
+  .chip { @apply inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px]; }
+  .chip--cyan { @apply bg-vscyan/15 text-vscyan; }
+  .chip--dim { @apply bg-vsline/50 text-vsdim; }
   .dot { @apply w-1.5 h-1.5 rounded-full; }
 
-  /* ── Forms ──────────────────────────────────── */
-  .lab { @apply block font-mono text-[11px] text-fog uppercase tracking-wide mb-2; }
+  /* Forms */
+  .lab { @apply block text-vsblue2 text-[12px] mb-1.5; }
   .inp {
-    @apply w-full h-11 px-4 rounded-xl bg-graphite-900 border border-edge text-ice text-[14px]
-           placeholder:text-fog2 focus:outline-none focus:border-mint transition-colors;
+    @apply w-full h-9 px-3 rounded bg-vsbg border border-vsline text-vstext text-[13px]
+           placeholder:text-vsdim focus:outline-none focus:border-vsblue transition-colors;
   }
-  .inp:focus { box-shadow: 0 0 0 3px rgba(0,229,160,.12); }
 
-  /* ── Tabela ─────────────────────────────────── */
+  /* Tabela = listagem */
   table.grid { @apply w-full border-collapse; }
-  table.grid thead th {
-    @apply text-left px-4 py-3 font-mono text-[11px] text-fog uppercase tracking-wide border-b border-edge;
-  }
-  table.grid tbody td { @apply px-4 py-3 border-b border-edge/50 text-[13px]; }
-  table.grid tbody tr { @apply transition-colors cursor-pointer; }
-  table.grid tbody tr:hover { @apply bg-graphite-600/50; }
+  table.grid thead th { @apply text-left px-3 py-2 text-[11px] uppercase tracking-wide text-vsdim border-b border-vsline; }
+  table.grid tbody td { @apply px-3 py-2 border-b border-vsline/40 text-[13px]; }
+  table.grid tbody tr:hover { @apply bg-vsline/30; }
 
-  .flash { @apply px-4 py-3 rounded-xl mb-4 text-[13px] font-mono border; }
-  .flash--ok { @apply bg-mint-dim text-mint border-mint/30; }
-  .flash--err { @apply bg-filament/10 text-filament border-filament/30; }
+  .flash { @apply px-3 py-2 rounded mb-4 text-[13px] border; }
+  .flash--ok { @apply bg-vsgreen/15 text-vsgreen border-vsgreen/30; }
+  .flash--err { @apply bg-red-500/15 text-red-400 border-red-500/30; }
 
-  .viewer-wrap { @apply relative rounded-2xl overflow-hidden border border-edge bg-graphite-900; }
+  .viewer-wrap { @apply relative rounded-md overflow-hidden border border-vsline bg-vsbg; }
   .viewer-bar { @apply absolute top-3 left-3 z-10 flex gap-2; }
-  .viewer-hud {
-    @apply absolute bottom-0 inset-x-0 px-4 py-2.5 bg-graphite-900/90 border-t border-edge
-           font-mono text-[11px] text-fog flex justify-between backdrop-blur;
-  }
+  .viewer-hud { @apply absolute bottom-0 inset-x-0 px-3 py-2 bg-vsbg/90 border-t border-vsline text-[11px] text-vsdim flex justify-between; }
+
+  /* comentário de código (verde) */
+  .comment { @apply text-vsgreen; }
+  .kw { @apply text-vspurple; }
+  .fn { @apply text-vsyellow; }
+  .str { @apply text-vsorange; }
 }

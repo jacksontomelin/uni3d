@@ -1,210 +1,197 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="dark">
-<title>Uni3D · Do arquivo à primeira camada</title>
-<meta name="description" content="Plataforma UniController de impressão 3D: visualize, repare e fatie STL, OBJ e 3MF no navegador. Chaveiros e litofanias a partir de imagem. Self-hosted.">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="dark">
+<title>Uni3D · bancada de impressão 3D</title>
+<meta name="description" content="Plataforma UniController de impressão 3D. Visualize, repare e fatie STL, OBJ e 3MF no navegador. Self-hosted.">
 <link rel="icon" type="image/svg+xml" href="img/logo.svg">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--gr9:#0a0e14;--gr8:#0d1117;--gr7:#161b22;--gr6:#1c2230;--edge:#2a3140;--mint:#00e5a0;--mintd:#00b37e;--mintdim:#0a3d2e;--fila:#ff6b35;--ice:#f0f3f6;--fog:#7d8590;--fog2:#4a525e}
+:root{--bg:#1e1e1e;--side:#252526;--act:#333;--tab:#2d2d2d;--line:#3e3e42;--blue:#007acc;--cyan:#4ec9b0;--yellow:#dcdcaa;--purple:#c586c0;--orange:#ce9178;--green:#6a9955;--blue2:#569cd6;--text:#d4d4d4;--dim:#858585}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:Inter,system-ui,sans-serif;background:var(--gr9);color:var(--ice);font-size:16px;line-height:1.6;overflow-x:hidden}
-.disp{font-family:'Space Grotesk',sans-serif}
-.mono{font-family:'Space Mono',monospace}
+body{font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 svg{display:block}
-::selection{background:var(--mint);color:var(--gr9)}
-.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(42,49,64,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(42,49,64,.3) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 0,black,transparent 70%)}
-.rel{position:relative;z-index:1}
+::selection{background:#264f78}
+.cmt{color:var(--green)}.kw{color:var(--purple)}.fn{color:var(--yellow)}.str{color:var(--orange)}.cy{color:var(--cyan)}.b2{color:var(--blue2)}
 
-/* nav */
-.nav{position:sticky;top:0;z-index:30;background:rgba(10,14,20,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--edge)}
-.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.brand{display:flex;align-items:center;gap:10px}
-.brand b{font-family:'Space Grotesk';font-size:18px;font-weight:600;letter-spacing:-.3px;display:block;line-height:1}
-.brand small{font-family:'Space Mono';font-size:9px;color:var(--fog);letter-spacing:.5px}
-.nav-links{display:flex;gap:28px;font-size:14px;color:var(--fog)}
-.nav-links a:hover{color:var(--ice)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:0 18px;height:40px;border-radius:11px;font-family:'Space Grotesk';font-weight:500;font-size:14px;border:1px solid transparent;cursor:pointer;transition:.18s}
-.btn-go{background:var(--mint);color:var(--gr9)}.btn-go:hover{background:var(--mintd);box-shadow:0 0 24px rgba(0,229,160,.3)}
-.btn-line{border-color:var(--edge);color:var(--ice)}.btn-line:hover{border-color:var(--mint);color:var(--mint)}
+/* title bar fake */
+.titlebar{height:36px;background:var(--tab);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;gap:8px;position:sticky;top:0;z-index:30}
+.dots{display:flex;gap:7px}.dots span{width:12px;height:12px;border-radius:50%}
+.tabx{margin-left:16px;font-size:13px;color:var(--dim);display:flex;align-items:center;gap:8px}
+.tabx .on{color:var(--text);border-bottom:2px solid var(--blue);padding:8px 12px;margin-bottom:-2px}
+.nav-cta{margin-left:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:0 16px;height:34px;border-radius:5px;font-family:inherit;font-size:13px;border:1px solid transparent;cursor:pointer;transition:.15s;font-weight:500}
+.btn-go{background:var(--blue);color:#fff}.btn-go:hover{background:#1b8ad0}
+.btn-line{border-color:var(--line);color:var(--text)}.btn-line:hover{background:rgba(62,62,66,.4)}
 
 /* hero */
-.hero{padding:100px 0 80px;position:relative}
-.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
-.tag{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono';font-size:11px;color:var(--mint);background:var(--mintdim);border:1px solid rgba(0,229,160,.25);padding:6px 12px;border-radius:8px;margin-bottom:24px;letter-spacing:.3px}
-.hero h1{font-family:'Space Grotesk';font-size:52px;line-height:1.06;letter-spacing:-1px;font-weight:600;margin-bottom:20px}
-.hero p{color:var(--fog);font-size:17px;max-width:480px;margin-bottom:30px}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px}
-.stats{display:flex;gap:40px}
-.stat .n{font-family:'Space Grotesk';font-size:26px;font-weight:600;color:var(--mint);line-height:1}
-.stat .l{font-family:'Space Mono';font-size:11px;color:var(--fog);margin-top:6px}
-.shot{border-radius:16px;overflow:hidden;border:1px solid var(--edge);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.hero{padding:72px 0 64px}
+.hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.cmt-line{color:var(--green);font-size:14px;margin-bottom:12px}
+.hero h1{font-size:34px;line-height:1.3;font-weight:600;margin-bottom:8px}
+.hero h1 .kw{color:var(--purple)}.hero h1 .cy{color:var(--cyan)}.hero h1 .str{color:var(--orange)}
+.hero p{color:var(--dim);font-size:15px;max-width:460px;margin:18px 0 26px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px}
+.consts{display:grid;gap:6px;font-size:13px}
+.consts div{display:flex;gap:8px}
+.shot{border-radius:8px;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .shot img{width:100%;display:block}
 
-/* strip */
-.strip{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);padding:20px 0;background:var(--gr8)}
-.strip .wrap{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;font-family:'Space Mono';font-size:12px;color:var(--fog)}
-.strip span{display:flex;align-items:center;gap:8px}
-.strip b{color:var(--ice);font-weight:400}
+/* strip como terminal */
+.strip{background:var(--side);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0}
+.strip .wrap{font-size:13px;color:var(--dim)}
+.strip .p{color:var(--green)}
 
-/* sections */
-section{padding:88px 0;position:relative}
-.head{max-width:620px;margin-bottom:48px}
-.kick{font-family:'Space Mono';font-size:11px;color:var(--mint);letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.kick::before{content:"";width:24px;height:1px;background:var(--mint)}
-h2{font-family:'Space Grotesk';font-size:36px;line-height:1.15;letter-spacing:-.5px;font-weight:600;margin-bottom:14px}
-.head p{color:var(--fog);font-size:17px}
-.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--edge);border:1px solid var(--edge);border-radius:16px;overflow:hidden}
-.feat{background:var(--gr8);padding:28px;transition:.2s}
-.feat:hover{background:var(--gr7)}
-.feat .ic{width:42px;height:42px;border-radius:11px;background:var(--mintdim);color:var(--mint);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.feat h3{font-family:'Space Grotesk';font-size:17px;font-weight:500;margin-bottom:8px}
-.feat p{color:var(--fog);font-size:14px}
+section{padding:80px 0}
+.head{margin-bottom:44px}
+.head .cmt{font-size:14px;margin-bottom:8px}
+h2{font-size:28px;font-weight:600;margin-bottom:10px}
+h2 .kw{color:var(--purple)}h2 .fn{color:var(--yellow)}
+.head p{color:var(--dim);font-size:15px}
 
-.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.spec{background:var(--gr8);border:1px solid var(--edge);border-radius:16px;overflow:hidden}
-.spec-h{padding:14px 18px;border-bottom:1px solid var(--edge);font-family:'Space Mono';font-size:11px;color:var(--fog);letter-spacing:.5px;display:flex;align-items:center;gap:8px}
-.spec-h .d{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
-.row{display:flex;justify-content:space-between;padding:13px 18px;border-bottom:1px solid rgba(42,49,64,.5);font-family:'Space Mono';font-size:13px}
-.row:last-child{border:0}.row .k{color:var(--fog)}.row .v{color:var(--ice)}.row .v.mint{color:var(--mint)}
-ul.chk{list-style:none;display:grid;gap:14px;margin-top:24px}
-ul.chk li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
-ul.chk svg{color:var(--mint);flex-shrink:0;margin-top:3px}
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat{background:var(--side);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.feat-h{background:var(--tab);border-bottom:1px solid var(--line);padding:8px 14px;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:8px}
+.feat-h .d{width:8px;height:8px;border-radius:50%}
+.feat-b{padding:18px}
+.feat h3{font-size:15px;color:var(--cyan);margin-bottom:8px}
+.feat p{color:var(--dim);font-size:13px}
 
-/* pricing */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.spec{background:var(--side);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.spec-h{background:var(--tab);border-bottom:1px solid var(--line);padding:8px 14px;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:8px}
+.spec-h .d{width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+.row{display:flex;padding:10px 16px;border-bottom:1px solid rgba(62,62,66,.5);font-size:13px}
+.row:last-child{border:0}.row .k{color:var(--blue2)}.row .k::after{content:":";color:var(--text)}.row .v{color:var(--orange);margin-left:auto}.row .v.n{color:var(--cyan)}.row .v.ok{color:var(--green)}
+ul.chk{list-style:none;display:grid;gap:12px;margin-top:20px}
+ul.chk li{display:flex;gap:10px;font-size:14px}ul.chk .c{color:var(--cyan)}
+
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.plan{background:var(--gr8);border:1px solid var(--edge);border-radius:16px;padding:28px;display:flex;flex-direction:column}
-.plan.hi{border-color:var(--mint);box-shadow:0 0 40px rgba(0,229,160,.1)}
-.plan .pn{font-family:'Space Grotesk';font-size:18px;font-weight:500}
-.plan .pp{font-family:'Space Grotesk';font-size:38px;font-weight:600;margin:12px 0 2px;letter-spacing:-1px}
-.plan .pp small{font-size:14px;color:var(--fog);font-weight:400}
-.plan .ps{color:var(--fog);font-size:13px;margin-bottom:22px}
-.plan ul{list-style:none;display:grid;gap:11px;font-size:14px;margin-bottom:24px;flex:1}
-.plan li{display:flex;gap:10px}.plan li svg{color:var(--mint);flex-shrink:0}
+.plan{background:var(--side);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.plan.hi{border-color:var(--blue)}
+.plan-h{background:var(--tab);border-bottom:1px solid var(--line);padding:8px 14px;font-size:12px;color:var(--dim)}
+.plan-b{padding:20px;display:flex;flex-direction:column;flex:1}
+.pn{font-size:16px;color:var(--cyan)}
+.pp{font-size:30px;font-weight:600;margin:10px 0 2px}.pp small{font-size:13px;color:var(--dim);font-weight:400}
+.ps{color:var(--dim);font-size:12px;margin-bottom:18px}
+.plan ul{list-style:none;display:grid;gap:9px;font-size:13px;margin-bottom:20px;flex:1}
+.plan li{display:flex;gap:8px}.plan li .c{color:var(--cyan)}
 
-.cta{border:1px solid var(--edge);border-radius:20px;padding:56px;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;background:linear-gradient(120deg,var(--gr7),var(--gr8));position:relative;overflow:hidden}
-.cta::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,160,.2),transparent 65%)}
-.cta h2{margin-bottom:6px}.cta p{color:var(--fog)}
+.cta{border:1px solid var(--line);border-radius:10px;background:var(--side);overflow:hidden}
+.cta-h{background:var(--tab);border-bottom:1px solid var(--line);padding:8px 14px;font-size:12px;color:var(--dim)}
+.cta-b{padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.cta h2{margin-bottom:4px}.cta p{color:var(--dim)}
 
-footer{border-top:1px solid var(--edge);padding:44px 0 26px;font-size:14px;color:var(--fog);background:var(--gr8)}
-footer .wrap{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px}
-footer h5{font-family:'Space Mono';color:var(--ice);font-size:11px;letter-spacing:.5px;margin-bottom:14px}
-footer a{display:block;margin-bottom:8px}footer a:hover{color:var(--ice)}
-.copy{border-top:1px solid var(--edge);margin-top:34px;padding-top:20px;text-align:center;font-family:'Space Mono';font-size:11px;color:var(--fog2)}
+footer{border-top:1px solid var(--line);background:var(--side);padding:36px 0 22px;font-size:13px;color:var(--dim)}
+footer .wrap{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:28px}
+footer h5{color:var(--text);font-size:12px;margin-bottom:12px}
+footer a{display:block;margin-bottom:7px}footer a:hover{color:var(--text)}
+.copy{border-top:1px solid var(--line);margin-top:28px;padding-top:18px;text-align:center;font-size:11px;color:var(--dim)}
+.statusbar{height:24px;background:var(--blue);color:#fff;display:flex;align-items:center;gap:16px;padding:0 14px;font-size:11px}
 
-@media(max-width:960px){.hero .wrap,.split{grid-template-columns:1fr;padding-top:0}.hero h1{font-size:38px}.feats,.plans{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr 1fr}.nav-links{display:none}h2{font-size:28px}}
+@media(max-width:900px){.hero .wrap,.split{grid-template-columns:1fr}.feats,.plans{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr 1fr}.tabx{display:none}h2{font-size:22px}.hero h1{font-size:26px}}
 </style>
 </head>
 <body>
-<div class="grid-bg"></div>
+<div class="titlebar">
+  <div class="dots"><span style="background:#ff5f56"></span><span style="background:#ffbd2e"></span><span style="background:#27c93f"></span></div>
+  <div class="tabx"><span class="on">uni3d.md</span><span>readme.txt</span></div>
+  <div class="nav-cta"><a href="/login" class="btn btn-go">entrar</a></div>
+</div>
 
-<nav class="nav"><div class="wrap">
-  <a href="#" class="brand">
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M16 3l11 6.35v12.7L16 28.4 5 22.05V9.35L16 3z" stroke="#2a3140" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 3l11 6.35L16 15.7 5 9.35 16 3z" stroke="#4a525e" stroke-width="1.2" stroke-linejoin="round"/><path d="M16 15.7v12.7M16 15.7L5 9.35M16 15.7l11-6.35" stroke="#4a525e" stroke-width="1.2"/><circle cx="16" cy="15.7" r="2.4" fill="#00e5a0"/><circle cx="16" cy="15.7" r="4.5" stroke="#00e5a0" stroke-width="1" opacity=".4"/></svg>
-    <div><b>Uni3D</b><small>UNICONTROLLER</small></div>
-  </a>
-  <div class="nav-links"><a href="#recursos">Recursos</a><a href="#selfhosted">Self-hosted</a><a href="#planos">Planos</a></div>
-  <a href="/login" class="btn btn-go">Entrar</a>
-</div></nav>
-
-<header class="hero rel"><div class="wrap">
+<header class="hero"><div class="wrap">
   <div>
-    <div class="tag">FABRICAÇÃO DIGITAL · UNICONTROLLER</div>
-    <h1 class="disp">Do arquivo à<br>primeira camada.</h1>
-    <p>Visualize, repare e fatie STL, OBJ e 3MF direto no navegador. Gere chaveiros e litofanias a partir de uma imagem. Tudo rodando no seu próprio servidor.</p>
-    <div class="hero-cta"><a href="/login" class="btn btn-go">Começar agora</a><a href="#recursos" class="btn btn-line">Ver recursos</a></div>
-    <div class="stats">
-      <div class="stat"><div class="n disp">STL</div><div class="l">OBJ · 3MF</div></div>
-      <div class="stat"><div class="n disp">100%</div><div class="l">self-hosted</div></div>
-      <div class="stat"><div class="n disp">0</div><div class="l">API paga</div></div>
+    <div class="cmt-line">{`// Uni3D — bancada de impressão 3D`}</div>
+    <h1><span class="kw">const</span> <span class="cy">uni3d</span> = <span class="kw">new</span> <span class="fn">Bancada</span>()</h1>
+    <p>Visualize, repare e fatie STL, OBJ e 3MF direto no navegador. Gere chaveiros e litofanias a partir de uma imagem. Tudo no seu próprio servidor.</p>
+    <div class="hero-cta"><a href="/login" class="btn btn-go">▸ começar agora</a><a href="#recursos" class="btn btn-line">ver recursos</a></div>
+    <div class="consts">
+      <div><span class="kw">import</span> <span class="cy">{ STL, OBJ, MF3 }</span></div>
+      <div><span class="kw">const</span> <span class="b2">hosting</span> = <span class="str">"self-hosted"</span></div>
+      <div><span class="kw">const</span> <span class="b2">apiPaga</span> = <span class="cy">false</span></div>
     </div>
   </div>
-  <div class="shot"><img src="img/editor.png" alt="Editor 3D do Uni3D — modelo na mesa de impressão"></div>
+  <div class="shot"><img src="img/editor.png" alt="Editor 3D do Uni3D"></div>
 </div></header>
 
-<div class="strip"><div class="wrap">
-  <span>three.js</span><span>Kiri:Moto</span><span>FastAPI</span><span>PostgreSQL</span><span>Docker · Coolify</span>
-</div></div>
+<div class="strip"><div class="wrap"><span class="p">$</span> stack: three.js · Kiri:Moto · FastAPI · PostgreSQL · Docker · Coolify</div></div>
 
-<section id="recursos" class="rel"><div class="wrap">
+<section id="recursos"><div class="wrap">
   <div class="head">
-    <div class="kick mono">RECURSOS</div>
-    <h2 class="disp">Uma bancada completa no navegador.</h2>
-    <p>Sem instalar nada, sem mandar arquivo pra fora, sem fila.</p>
+    <div class="cmt">{`// recursos`}</div>
+    <h2><span class="fn">recursos</span>()</h2>
+    <p>Uma bancada completa no navegador. Sem instalar nada, sem mandar arquivo pra fora.</p>
   </div>
   <div class="feats">
-    <div class="feat"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zM12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></div><h3 class="disp">Visualizador 3D</h3><p>Gira, dá zoom e alterna wireframe. Vê o modelo em pé na mesa da sua impressora, do tamanho real.</p></div>
-    <div class="feat"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><h3 class="disp">Fatiador integrado</h3><p>Kiri:Moto embarcado: escolhe o perfil, fatia e baixa o G-code sem nada sair do seu servidor.</p></div>
-    <div class="feat"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 17l14-14 4 4L7 21l-4-4zM7 13l2 2M10 10l2 2M13 7l2 2"/></svg></div><h3 class="disp">Imagem → 3D</h3><p>Manda o logo ou uma foto e gera chaveiro, relevo ou litofania em STL, pronto pra fatiar.</p></div>
-    <div class="feat"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 22a10 10 0 100-20 10 10 0 000 20zm0-14v.01M12 12v5"/></svg></div><h3 class="disp">Ficha da malha</h3><p>Vértices, faces, dimensões em mm e se a malha está fechada. Descobre o problema antes do filamento.</p></div>
-    <div class="feat"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></div><h3 class="disp">Perfis de impressão</h3><p>PLA, PETG, rápido, fino. Cadastra uma vez, usa em todo projeto. Trava por cliente no plano multi-loja.</p></div>
-    <div class="feat"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v7H6z"/></svg></div><h3 class="disp">Várias impressoras</h3><p>Ender, Bambu, Prusa. Cada uma com seu volume e bico, e a mesa no viewer muda junto.</p></div>
+    <div class="feat"><div class="feat-h"><span class="d" style="background:#4ec9b0"></span>viewer.js</div><div class="feat-b"><h3>Visualizador 3D</h3><p>Gira, dá zoom, wireframe. Modelo em pé na mesa, tamanho real.</p></div></div>
+    <div class="feat"><div class="feat-h"><span class="d" style="background:#dcdcaa"></span>slicer.gcode</div><div class="feat-b"><h3>Fatiador integrado</h3><p>Kiri:Moto embarcado. Escolhe o perfil, fatia e baixa o G-code no navegador.</p></div></div>
+    <div class="feat"><div class="feat-h"><span class="d" style="background:#569cd6"></span>image_3d.py</div><div class="feat-b"><h3>Imagem → 3D</h3><p>Logo ou foto vira chaveiro, relevo ou litofania em STL.</p></div></div>
+    <div class="feat"><div class="feat-h"><span class="d" style="background:#c586c0"></span>mesh.stat</div><div class="feat-b"><h3>Ficha da malha</h3><p>Vértices, faces, dimensões e se a malha está fechada. Antes do filamento.</p></div></div>
+    <div class="feat"><div class="feat-h"><span class="d" style="background:#ce9178"></span>perfis.ini</div><div class="feat-b"><h3>Perfis de impressão</h3><p>PLA, PETG, rápido, fino. Cadastra uma vez, usa em todo projeto.</p></div></div>
+    <div class="feat"><div class="feat-h"><span class="d" style="background:#6a9955"></span>printers.cfg</div><div class="feat-b"><h3>Várias impressoras</h3><p>Ender, Bambu, Prusa. Cada uma com seu volume e bico.</p></div></div>
   </div>
 </div></section>
 
-<section id="selfhosted" class="rel"><div class="wrap split">
+<section><div class="wrap split">
   <div>
-    <div class="kick mono">SELF-HOSTED</div>
-    <h2 class="disp">Seus arquivos ficam no seu servidor.</h2>
-    <p style="color:var(--fog);font-size:16px">O Uni3D roda inteiro na sua infraestrutura. Nenhum modelo, G-code ou dado de cliente passa por serviço de terceiros.</p>
+    <div class="cmt">{`// self-hosted`}</div>
+    <h2>Seus arquivos, seu servidor.</h2>
+    <p style="color:var(--dim);font-size:15px">O Uni3D roda inteiro na sua infraestrutura. Nenhum modelo, G-code ou dado passa por terceiros.</p>
     <ul class="chk">
-      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Sobe com docker-compose no seu VPS ou Coolify</li>
-      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Fatiamento no navegador, sem carga no servidor</li>
-      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Base open-source: three.js, Kiri:Moto (MIT), FastAPI</li>
-      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Sem API paga, sem surpresa na fatura</li>
+      <li><span class="c">✓</span>Sobe com docker-compose no seu VPS ou Coolify</li>
+      <li><span class="c">✓</span>Fatiamento no navegador, sem carga no servidor</li>
+      <li><span class="c">✓</span>Base open-source: three.js, Kiri:Moto (MIT), FastAPI</li>
+      <li><span class="c">✓</span>Sem API paga, sem surpresa na fatura</li>
     </ul>
   </div>
   <div class="spec">
-    <div class="spec-h mono"><span class="d"></span>FICHA_DO_MODELO</div>
-    <div class="row"><span class="k">arquivo</span><span class="v">suporte_gopro.stl</span></div>
-    <div class="row"><span class="k">dimensões_mm</span><span class="v">80.0 × 50.0 × 52.0</span></div>
-    <div class="row"><span class="k">vértices</span><span class="v">12.840</span></div>
-    <div class="row"><span class="k">faces</span><span class="v">25.680</span></div>
-    <div class="row"><span class="k">malha_fechada</span><span class="v mint">sim</span></div>
-    <div class="row"><span class="k">perfil</span><span class="v">PLA 0.2mm</span></div>
-    <div class="row"><span class="k">tempo · filamento</span><span class="v mint">1h37 · 18.4g</span></div>
+    <div class="spec-h"><span class="d"></span>ficha_do_modelo.json</div>
+    <div class="row"><span class="k">arquivo</span><span class="v">"suporte_gopro.stl"</span></div>
+    <div class="row"><span class="k">dimensoes_mm</span><span class="v">"80 × 50 × 52"</span></div>
+    <div class="row"><span class="k">vertices</span><span class="v n">12840</span></div>
+    <div class="row"><span class="k">faces</span><span class="v n">25680</span></div>
+    <div class="row"><span class="k">malha_fechada</span><span class="v ok">true</span></div>
+    <div class="row"><span class="k">perfil</span><span class="v">"PLA 0.2mm"</span></div>
+    <div class="row"><span class="k">tempo_filamento</span><span class="v">"1h37 · 18.4g"</span></div>
   </div>
 </div></section>
 
-<section id="planos" class="rel"><div class="wrap">
-  <div class="head">
-    <div class="kick mono">PLANOS</div>
-    <h2 class="disp">Simples de escolher.</h2>
-    <p>Todos rodam no seu servidor. A diferença é o tamanho da operação.</p>
-  </div>
+<section><div class="wrap">
+  <div class="head"><div class="cmt">{`// planos`}</div><h2>Simples de escolher.</h2><p>Todos rodam no seu servidor.</p></div>
   <div class="plans">
-    <div class="plan"><div class="pn disp">Maker</div><div class="pp disp">R$ 0<small>/mês</small></div><div class="ps">Pra quem tem uma impressora em casa.</div>
-      <ul><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>1 usuário, 1 impressora</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Até 20 projetos</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Viewer + fatiador + imagem→3D</li></ul>
-      <a href="/login" class="btn btn-line" style="justify-content:center">Começar grátis</a></div>
-    <div class="plan hi"><div class="pn disp">Loja</div><div class="pp disp">R$ 149<small>/mês</small></div><div class="ps">Pra loja de impressão que atende cliente.</div>
-      <ul><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Até 5 usuários, impressoras ilimitadas</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Projetos ilimitados</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Perfis por cliente</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Suporte por WhatsApp</li></ul>
-      <a href="/login" class="btn btn-go" style="justify-content:center">Assinar Loja</a></div>
-    <div class="plan"><div class="pn disp">Rede</div><div class="pp disp">Sob consulta</div><div class="ps">Pra várias unidades ou marca própria.</div>
-      <ul><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Usuários e unidades ilimitados</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Marca própria (white-label)</li><li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>Integração com o ecossistema UniController</li></ul>
-      <a href="#" class="btn btn-line" style="justify-content:center">Falar comigo</a></div>
+    <div class="plan"><div class="plan-h">maker.free</div><div class="plan-b"><div class="pn">Maker</div><div class="pp">R$ 0<small>/mês</small></div><div class="ps">Uma impressora em casa.</div>
+      <ul><li><span class="c">✓</span>1 usuário, 1 impressora</li><li><span class="c">✓</span>Até 20 projetos</li><li><span class="c">✓</span>Viewer + fatiador + imagem→3D</li></ul>
+      <a href="/login" class="btn btn-line" style="justify-content:center">começar grátis</a></div></div>
+    <div class="plan hi"><div class="plan-h">loja.pro</div><div class="plan-b"><div class="pn">Loja</div><div class="pp">R$ 149<small>/mês</small></div><div class="ps">Loja que atende cliente.</div>
+      <ul><li><span class="c">✓</span>Até 5 usuários, impressoras ilimitadas</li><li><span class="c">✓</span>Projetos ilimitados</li><li><span class="c">✓</span>Perfis por cliente</li><li><span class="c">✓</span>Suporte WhatsApp</li></ul>
+      <a href="/login" class="btn btn-go" style="justify-content:center">assinar loja</a></div></div>
+    <div class="plan"><div class="plan-h">rede.enterprise</div><div class="plan-b"><div class="pn">Rede</div><div class="pp">consulta</div><div class="ps">Várias unidades ou marca própria.</div>
+      <ul><li><span class="c">✓</span>Usuários e unidades ilimitados</li><li><span class="c">✓</span>White-label</li><li><span class="c">✓</span>Integração UniController</li></ul>
+      <a href="#" class="btn btn-line" style="justify-content:center">falar comigo</a></div></div>
   </div>
 </div></section>
 
-<section class="rel"><div class="wrap"><div class="cta">
-  <div><h2 class="disp">Bora colocar sua impressora pra trabalhar.</h2><p>Sobe em minutos no seu servidor. Sem cartão, sem instalação.</p></div>
-  <a href="/login" class="btn btn-go">Criar minha conta</a>
+<section><div class="wrap"><div class="cta">
+  <div class="cta-h">run.sh</div>
+  <div class="cta-b">
+    <div><h2>Bora imprimir.</h2><p><span class="cmt">$</span> docker compose up -d <span class="cmt"># sobe em minutos</span></p></div>
+    <a href="/login" class="btn btn-go">criar minha conta</a>
+  </div>
 </div></div></section>
 
 <footer><div class="wrap">
   <div>
-    <div class="brand" style="margin-bottom:12px"><svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M16 3l11 6.35v12.7L16 28.4 5 22.05V9.35L16 3z" stroke="#2a3140" stroke-width="1.5" stroke-linejoin="round"/><circle cx="16" cy="15.7" r="2.4" fill="#00e5a0"/></svg><div><b style="color:var(--ice)">Uni3D</b><small>UNICONTROLLER</small></div></div>
-    <p style="max-width:280px">Plataforma de impressão 3D do ecossistema UniController.</p>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><svg width="26" height="26" viewBox="0 0 32 32" fill="none"><path d="M16 3l11 6.35v12.7L16 28.4 5 22.05V9.35L16 3z" stroke="#4ec9b0" stroke-width="1.5" stroke-linejoin="round"/><circle cx="16" cy="15.7" r="2.2" fill="#007acc"/></svg><b style="color:var(--text);font-size:16px">Uni3D</b></div>
+    <p style="max-width:280px"><span class="cmt">{`// impressão 3D · ecossistema UniController`}</span></p>
   </div>
-  <div><h5>Produto</h5><a href="#recursos">Recursos</a><a href="#selfhosted">Self-hosted</a><a href="#planos">Planos</a><a href="/login">Entrar</a></div>
-  <div><h5>UNICONTROLLER</h5><a href="https://unicontroller.com.br">unicontroller.com.br</a><a href="https://procuracoes.com.br">UNIPROCURAÇÕES</a></div>
-  <div><h5>CONTATO</h5><a href="mailto:contato@unicontroller.com.br">contato@unicontroller.com.br</a><a href="#">Blumenau · Timbó, SC</a></div>
-  <div class="copy" style="grid-column:1/-1">UNICONTROLLER · DEV JACKSON TOMELIN · <span id="y"></span></div>
+  <div><h5>produto</h5><a href="#recursos">recursos</a><a href="/login">entrar</a></div>
+  <div><h5>unicontroller</h5><a href="https://unicontroller.com.br">unicontroller.com.br</a><a href="mailto:contato@unicontroller.com.br">contato@unicontroller.com.br</a></div>
+  <div class="copy" style="grid-column:1/-1">UniController · Dev Jackson Tomelin · <span id="y"></span> · Blumenau/Timbó, SC</div>
 </div></footer>
-<script>document.getElementById("y").textContent=new Date().getFullYear()</script>
+<div class="statusbar"><span>● main</span><span>✓ pronto</span><span style="margin-left:auto">Uni3D v1.0</span></div>
+<script>document.getElementById("y").textContent=new Date().getFullYear();document.querySelectorAll('.cmt-line,.consts div,.cmt').forEach(e=>{e.innerHTML=e.innerHTML.replace(/\{`|`\}/g,'')})</script>
 </body>
 </html>
