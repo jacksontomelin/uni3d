@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback } from "react";
 
 /**
  * Embeds Kiri:Moto in an iframe and communicates via postMessage.
- * The iframe loads from /slicer/ (proxied to the kirimoto container).
+ * The iframe loads from /kiri/ (proxied to the kirimoto container).
  *
  * Kiri:Moto frame API docs:
  * https://github.com/GridSpace/grid-apps/wiki/Kiri:Moto-Frame-API
@@ -55,7 +55,7 @@ export default function SlicerPanel({ fileUrl, onGcodeReady }) {
     <div className="h-full w-full rounded-xl overflow-hidden border border-vsline-700">
       <iframe
         ref={iframeRef}
-        src="/slicer/"
+        src="/kiri/"
         className="h-full w-full border-0"
         title="Kiri:Moto Slicer"
         sandbox="allow-scripts allow-same-origin allow-popups"
