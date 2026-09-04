@@ -86,8 +86,8 @@ export default function ProjectDetail() {
         <button className="btn btn--line btn--sm" onClick={() => navigate("/projetos")}><Icon name="voltar" size={14} /> Projetos</button>
         <h2 className="text-vstext text-[18px] font-bold m-0">{project.name}</h2>
         <div className="ml-auto flex rounded border border-vsline overflow-hidden bg-vsside">
-          <button onClick={() => setTab("viewer")} className={`px-4 py-[7px] text-[13px] font-semibold flex items-center gap-1.5 ${tab === "viewer" ? "bg-vsblue text-white" : "text-vstext hover:bg-slate-50"}`}><Icon name="olho" size={14} /> Visualizar</button>
-          <button onClick={() => setTab("slicer")} className={`px-4 py-[7px] text-[13px] font-semibold flex items-center gap-1.5 ${tab === "slicer" ? "bg-vsblue text-white" : "text-vstext hover:bg-slate-50"}`}><Icon name="camadas" size={14} /> Fatiar</button>
+          <button onClick={() => setTab("viewer")} className={`px-4 py-[7px] text-[13px] font-semibold flex items-center gap-1.5 ${tab === "viewer" ? "bg-vsblue text-white" : "text-vstext hover:bg-vsline/30"}`}><Icon name="olho" size={14} /> Visualizar</button>
+          <button onClick={() => setTab("slicer")} className={`px-4 py-[7px] text-[13px] font-semibold flex items-center gap-1.5 ${tab === "slicer" ? "bg-vsblue text-white" : "text-vstext hover:bg-vsline/30"}`}><Icon name="camadas" size={14} /> Fatiar</button>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ export default function ProjectDetail() {
                   <div
                     key={f.id}
                     onClick={() => select(f)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer border transition-colors ${active?.id === f.id ? "bg-vssel/40 border-vsblue/40" : "border-transparent hover:bg-slate-50"}`}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer border transition-colors ${active?.id === f.id ? "bg-vssel/40 border-vsblue/40" : "border-transparent hover:bg-vsline/30"}`}
                   >
                     <Icon name={f.format === "gcode" ? "camadas" : "cubo"} size={15} className={active?.id === f.id ? "text-vsblue2" : "text-vsdim"} />
                     <span className="flex-1 truncate text-[13px] text-ink">{f.original_name}</span>

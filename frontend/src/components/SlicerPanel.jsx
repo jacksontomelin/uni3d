@@ -52,7 +52,7 @@ export default function SlicerPanel({ fileUrl, onGcodeReady }) {
   }, [fileUrl, sendMessage]);
 
   return (
-    <div className="h-full w-full rounded-xl overflow-hidden border border-navy-700">
+    <div className="h-full w-full rounded-xl overflow-hidden border border-vsline-700">
       <iframe
         ref={iframeRef}
         src="/slicer/"

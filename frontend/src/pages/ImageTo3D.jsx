@@ -127,8 +127,8 @@ export default function ImageTo3D() {
             <div className="space-y-2">
               {MODOS.map((m) => (
                 <button key={m.id} onClick={() => setMode(m.id)}
-                  className={`w-full flex items-start gap-3 p-3 rounded-lg border text-left transition-colors ${mode === m.id ? "border-azure bg-vssel/40" : "border-vsline hover:bg-slate-50"}`}>
-                  <span className={`text-vscyan shrink-0 ${mode === m.id ? "" : "!bg-slate-100 !text-vstext"}`}><Icon name={m.icon} /></span>
+                  className={`w-full flex items-start gap-3 p-3 rounded-lg border text-left transition-colors ${mode === m.id ? "border-azure bg-vssel/40" : "border-vsline hover:bg-vsline/30"}`}>
+                  <span className={`text-vscyan shrink-0 ${mode === m.id ? "" : "!bg-vsline/50 !text-vstext"}`}><Icon name={m.icon} /></span>
                   <span>
                     <span className="block text-[13.5px] font-semibold text-vstext">{m.nome}</span>
                     <span className="block text-[12px] text-vsdim">{m.desc}</span>

@@ -8,76 +8,57 @@ export default function Projects() {
   const [q, setQ] = useState("");
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
-  const navigate = useNavigate();
+  const nav = useNavigate();
 
-  const load = async () => {
-    const { data } = await api.get("/projects/");
-    setProjects(data);
-  };
+  const load = async () => { const { data } = await api.get("/projects/"); setProjects(data); };
   useEffect(() => { load(); }, []);
 
   const create = async () => {
     if (!name.trim()) return;
     setCreating(true);
-    try {
-      const { data } = await api.post("/projects/", { name: name.trim() });
-      navigate(`/projeto/${data.id}`);
-    } finally {
-      setCreating(false);
-    }
+    try { const { data } = await api.post("/projects/", { name: name.trim() }); nav(`/projeto/${data.id}`); }
+    finally { setCreating(false); }
   };
-
-  const remove = async (id) => {
-    if (!confirm("Remover este projeto e todos os arquivos?")) return;
-    await api.delete(`/projects/${id}`);
-    load();
-  };
-
+  const remove = async (id) => { if (!confirm("Remover este projeto?")) return; await api.delete(`/projects/${id}`); load(); };
   const filtered = projects.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
 
   return (
     <>
-      <div className="flex flex-wrap gap-3 items-end justify-between mb-4">
-        <div className=" !mb-0 w-full sm:w-[320px]">
-          <label className="lab">Buscar</label>
-          <input placeholder="Nome do projeto" value={q} onChange={(e) => setQ(e.target.value)} />
-        </div>
-        <div className="flex gap-2 items-end">
-          <div className=" !mb-0 w-[240px]">
-            <label className="lab">Novo projeto</label>
-            <input placeholder="Ex.: Suporte câmera" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && create()} />
+      <p className="comment text-[13px] mb-4">{"// projetos — array de modelos 3D"}</p>
+
+      <div className="flex flex-wrap gap-3 items-end mb-5">
+        <div className="flex-1 min-w-[240px]">
+          <label className="lab">buscar</label>
+          <div className="relative">
+            <Icon name="search" size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-vsdim" />
+            <input className="inp pl-9" placeholder="filtrar por nome" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
-          <button className="btn btn--go" onClick={create} disabled={creating}>
-            <Icon name="mais" size={15} /> Criar
-          </button>
         </div>
+        <div className="w-[240px]">
+          <label className="lab">novo projeto</label>
+          <input className="inp" placeholder="nome do projeto" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && create()} />
+        </div>
+        <button className="btn btn--go" onClick={create} disabled={creating}><Icon name="plus" size={15} /> criar</button>
       </div>
 
       <div className="card">
+        <div className="card__h"><span className="flex items-center gap-2"><Icon name="cube" size={14} className="text-vscyan" /> projetos.json</span><span className="chip chip--dim">{filtered.length} itens</span></div>
         <div className="card__b !p-0">
           {filtered.length === 0 ? (
-            <div className="p-10 text-center">
-              <div className="text-vscyan mx-auto mb-3 !w-12 !h-12"><Icon name="cubo" size={24} /></div>
-              <p className="text-vstext font-semibold m-0 mb-1">Nenhum projeto por aqui</p>
-              <p className="text-vsdim m-0 text-[13px]">Crie um projeto acima e envie seus arquivos STL, OBJ ou 3MF.</p>
-            </div>
+            <p className="comment p-4 m-0">{"// nenhum projeto — crie o primeiro acima"}</p>
           ) : (
             <table className="grid">
-              <thead>
-                <tr><th>Projeto</th><th>Descrição</th><th>Criado</th><th>Atualizado</th><th></th></tr>
-              </thead>
+              <thead><tr><th>projeto</th><th>descrição</th><th>criado</th><th>atualizado</th><th></th></tr></thead>
               <tbody>
                 {filtered.map((p) => (
-                  <tr key={p.id} className="cursor-pointer" onClick={() => navigate(`/projeto/${p.id}`)}>
-                    <td className="font-semibold text-vstext">
-                      <span className="inline-flex items-center gap-3"><span className="text-vscyan"><Icon name="cubo" size={15} /></span>{p.name}</span>
-                    </td>
-                    <td className="text-vsdim">{p.description || "Não informado"}</td>
-                    <td>{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
-                    <td>{new Date(p.updated_at).toLocaleDateString("pt-BR")}</td>
+                  <tr key={p.id} className="cursor-pointer" onClick={() => nav(`/projeto/${p.id}`)}>
+                    <td><span className="flex items-center gap-2"><Icon name="cube" size={14} className="text-vscyan" /><span className="text-vstext">{p.name}</span></span></td>
+                    <td className="text-vsdim">{p.description || <span className="comment">// sem descrição</span>}</td>
+                    <td className="text-vsdim">{new Date(p.created_at).toLocaleDateString("pt-BR")}</td>
+                    <td className="text-vsdim">{new Date(p.updated_at).toLocaleDateString("pt-BR")}</td>
                     <td className="text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                      <button className="btn btn--line btn--sm mr-1" onClick={() => navigate(`/projeto/${p.id}`)}>Abrir</button>
-                      <button className="btn btn--danger btn--sm" onClick={() => remove(p.id)}><Icon name="lixeira" size={13} /></button>
+                      <button className="btn btn--line !h-7 text-[12px] mr-1" onClick={() => nav(`/projeto/${p.id}`)}>abrir →</button>
+                      <button className="btn btn--ghost !h-7 !px-2 text-red-400" onClick={() => remove(p.id)}><Icon name="trash" size={13} /></button>
                     </td>
                   </tr>
                 ))}
