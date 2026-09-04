@@ -127,3 +127,52 @@
   .fn { @apply text-vsyellow; }
   .str { @apply text-vsorange; }
 }
+
+/* ─────────────────────────────────────────────
+   RESPONSIVO — interface IDE adaptada ao mobile
+   ───────────────────────────────────────────── */
+@media (max-width: 820px) {
+  /* activity bar vira barra inferior de navegação */
+  .ide { flex-direction: column; }
+  .actbar {
+    order: 3; width: 100%; height: 52px; flex-direction: row;
+    justify-content: space-around; padding: 0; border-top: 1px solid #3e3e42;
+    position: sticky; bottom: 0; z-index: 40;
+  }
+  .actbar__i { width: auto; height: 52px; flex: 1; }
+  .actbar__i.active::before { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 2px; }
+  .actbar .flex-1 { display: none; }
+
+  /* explorer vira drawer deslizante */
+  .explorer {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 50;
+    width: 78%; max-width: 300px;
+    transform: translateX(-100%); transition: transform .22s ease;
+    box-shadow: 4px 0 24px rgba(0,0,0,.5);
+  }
+  .explorer.open { transform: translateX(0); }
+  .explorer-backdrop { display: block; position: fixed; inset: 0; z-index: 45; background: rgba(0,0,0,.5); }
+  .explorer-backdrop.hidden { display: none; }
+
+  .editor { order: 1; }
+  .work { padding: 16px; }
+
+  /* abas: mostra botão de menu + aba atual */
+  .tabs { padding-left: 0; }
+
+  /* status bar: esconde itens menos essenciais */
+  .statusbar { font-size: 10px; gap: 10px; padding: 0 10px; }
+  .statusbar .hide-sm { display: none; }
+
+  /* editor de projeto: colunas viram empilhadas */
+  .proj-cols { grid-template-columns: 1fr !important; }
+
+  /* login split vira single no mobile já é feito por lg: */
+}
+
+/* toque: alvos maiores no mobile */
+@media (max-width: 820px) and (pointer: coarse) {
+  .btn { height: 40px; }
+  .explorer__i { padding-top: 8px; padding-bottom: 8px; }
+  table.grid tbody td { padding-top: 12px; padding-bottom: 12px; }
+}
