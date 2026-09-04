@@ -8,6 +8,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import { Slicer, Impressoras, Perfis } from "./pages/Extras";
 import ImageTo3D from "./pages/ImageTo3D";
+import Biblioteca from "./pages/Biblioteca";
 
 export default function App() {
   const token = useAuthStore((s) => s.token);
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/projetos" element={<Projects />} />
           <Route path="/projeto/:id" element={<ProjectDetail />} />
           <Route path="/imagem-3d" element={<ImageTo3D />} />
+          <Route path="/biblioteca" element={<Biblioteca />} />
           <Route path="/fatiador" element={<Slicer />} />
           <Route path="/impressoras" element={<Impressoras />} />
           <Route path="/perfis" element={<Perfis />} />

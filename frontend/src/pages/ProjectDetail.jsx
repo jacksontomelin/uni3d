@@ -4,6 +4,7 @@ import api from "../lib/api";
 import ModelViewer from "../components/ModelViewer";
 import SlicerPanel from "../components/SlicerPanel";
 import Icon from "../components/Icon";
+import { estimarImpressao } from "../lib/meshtools";
 
 const fmtKB = (b) => (b >= 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.round(b / 1024)} KB`);
 const fmtTempo = (s) => { if (!s) return "Não informado"; const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? `${h}h ${m}min` : `${m}min`; };
@@ -17,6 +18,7 @@ export default function ProjectDetail() {
   const [active, setActive] = useState(null);
   const [activeUrl, setActiveUrl] = useState(null);
   const [meshInfo, setMeshInfo] = useState(null);
+  const [infill, setInfill] = useState(15);
   const [uploading, setUploading] = useState(false);
   const [tab, setTab] = useState("viewer");
   const [flash, setFlash] = useState(null);
@@ -145,7 +147,29 @@ export default function ProjectDetail() {
                 {active.print_time_seconds && <div className="kv"><span className="kv__k">Tempo estimado</span><span className="kv__v">{fmtTempo(active.print_time_seconds)}</span></div>}
                 {active.filament_grams && <div className="kv"><span className="kv__k">Filamento</span><span className="kv__v">{active.filament_grams.toFixed(1)} g</span></div>}
 
-                <div className="flex gap-2 mt-4">
+                
+                {meshInfo && (
+                  <>
+                    <div className="kv"><span className="kv__k">Bordas abertas</span><span className={`kv__v ${meshInfo.bordasAbertas ? "text-red-400" : "kv__v--ok"}`}>{meshInfo.bordasAbertas ?? "—"}</span></div>
+                    <div className="kv"><span className="kv__k">Degenerados</span><span className={`kv__v ${meshInfo.degenerados ? "text-vsyellow" : "kv__v--ok"}`}>{meshInfo.degenerados ?? "—"}</span></div>
+                    <div className="kv"><span className="kv__k">Volume</span><span className="kv__v--num kv__v">{meshInfo.volumeCm3 ? meshInfo.volumeCm3.toFixed(1) + " cm³" : "—"}</span></div>
+                  </>
+                )}
+
+                {/* estimativa */}
+                {meshInfo?.volumeCm3 > 0 && (() => { const e = estimarImpressao(meshInfo.volumeCm3, { infill: infill/100 }); return (
+                  <div className="mt-3 pt-3 border-t border-vsline/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-vsblue2 text-[12px]">estimativa</span>
+                      <span className="text-vsdim text-[11px]">infill {infill}%</span>
+                    </div>
+                    <input type="range" min="5" max="100" step="5" value={infill} onChange={(ev)=>setInfill(+ev.target.value)} className="w-full mb-2 accent-vsblue" />
+                    <div className="kv"><span className="kv__k">Filamento</span><span className="kv__v--num kv__v">{e.gramas} g · {e.metros} m</span></div>
+                    <div className="kv"><span className="kv__k">Tempo aprox.</span><span className="kv__v">{e.horas}h {e.mins}min</span></div>
+                    <div className="kv"><span className="kv__k">Custo (R$120/kg)</span><span className="kv__v--ok kv__v">R$ {e.custo.toFixed(2)}</span></div>
+                  </div>
+                ); })()}
+<div className="flex gap-2 mt-4">
                   <button className="btn btn--line btn--sm flex-1 justify-center" onClick={baixar}><Icon name="download" size={13} /> Baixar</button>
                   <button className="btn btn--go btn--sm flex-1 justify-center" onClick={() => setTab("slicer")}><Icon name="camadas" size={13} /> Fatiar</button>
                 </div>

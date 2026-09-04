@@ -6,18 +6,20 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { ThreeMFLoader } from "three/examples/jsm/loaders/3MFLoader";
 import * as THREE from "three";
 import Icon from "./Icon";
+import { analisarMalha } from "../lib/meshtools";
 
 function STLModel({ url, wireframe, onInfo }) {
   const geometry = useLoader(STLLoader, url);
   useEffect(() => {
     geometry.computeVertexNormals();
     geometry.computeBoundingBox();
-    const bb = geometry.boundingBox;
-    onInfo?.({
-      vertices: geometry.attributes.position.count,
-      faces: geometry.attributes.position.count / 3,
-      dims: bb ? [bb.max.x - bb.min.x, bb.max.y - bb.min.y, bb.max.z - bb.min.z] : null,
-    });
+    try {
+      const info = analisarMalha(geometry);
+      onInfo?.(info);
+    } catch {
+      const bb = geometry.boundingBox;
+      onInfo?.({ vertices: geometry.attributes.position.count, faces: geometry.attributes.position.count / 3, dims: bb ? [bb.max.x - bb.min.x, bb.max.y - bb.min.y, bb.max.z - bb.min.z] : null });
+    }
   }, [geometry]);
   return (
     <Center top>

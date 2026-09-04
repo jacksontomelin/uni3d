@@ -6,7 +6,7 @@ import { Mark } from "./Logo";
 import { useAuthStore } from "../lib/store";
 
 const meta = {
-  "/": { tab: "painel.jsx" }, "/projetos": { tab: "projetos.json" }, "/imagem-3d": { tab: "imagem_3d.py" },
+  "/": { tab: "painel.jsx" }, "/projetos": { tab: "projetos.json" }, "/imagem-3d": { tab: "imagem_3d.py" }, "/biblioteca": { tab: "biblioteca.stl" },
   "/fatiador": { tab: "fatiador.gcode" }, "/impressoras": { tab: "impressoras.cfg" }, "/perfis": { tab: "perfis.ini" },
 };
 

@@ -6,6 +6,7 @@ const files = [
   { to: "/", label: "painel.jsx", icon: "fileicon", color: "text-vsyellow" },
   { to: "/projetos", label: "projetos.json", icon: "fileicon", color: "text-vsorange" },
   { to: "/imagem-3d", label: "imagem_3d.py", icon: "fileicon", color: "text-vsblue2" },
+  { to: "/biblioteca", label: "biblioteca.stl", icon: "fileicon", color: "text-vspurple" },
   { to: "/fatiador", label: "fatiador.gcode", icon: "fileicon", color: "text-vscyan" },
   { to: "/impressoras", label: "impressoras.cfg", icon: "fileicon", color: "text-vspurple" },
   { to: "/perfis", label: "perfis.ini", icon: "fileicon", color: "text-vsgreen" },
